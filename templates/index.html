@@ -234,10 +234,15 @@
             white-space: nowrap; 
             vertical-align: top; 
             position: sticky;
-            top: 60px; /* Abaixo do H1 sticky */
+            top: 0; 
             z-index: 15;
         }
         tr:hover td { background: rgba(255, 255, 255, 0.02); }
+        
+        /* Ajuste para evitar sobreposição no Review Section onde o H1 também é sticky */
+        #reviewSection th {
+            top: 70px; /* Altura aproximada do H1 sticky */
+        }
 
         .filter-input {
             width: 100%;
@@ -630,6 +635,60 @@
         }
         th .filter-input {
             margin-top: 4px;
+        }
+
+        /* Summary Cards Styles (Premium) */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 120px;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--primary);
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.5px;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .stat-icon {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            opacity: 0.15;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover .stat-icon {
+            opacity: 0.3;
+            transform: translateY(-50%) scale(1.1);
         }
 
     </style>
@@ -2115,28 +2174,62 @@
 
     <!-- Módulo Lançamento Investimentos -->
     <div class="container module-container module-fullscreen" id="lctoInvestimentosModule" style="display:none;">
-        <h1 style="text-align:center; margin-bottom:0.5rem;"><i class="fa-solid fa-chart-line"></i> Lançamentos de Investimentos</h1>
+        <h1 style="text-align:center; margin-bottom:1.5rem;"><i class="fa-solid fa-chart-line" style="margin-right:15px; color:var(--primary);"></i>Lançamentos de Investimentos</h1>
+        
+        <!-- Cards de Resumo -->
+        <div class="summary-grid" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div class="stat-value" id="li_sum_investido_brl" style="color: var(--text-light);">R$ 0,00</div>
+                <div class="stat-label">Valor Investido em BRL</div>
+                <i class="fa-solid fa-money-bill-1 stat-icon" style="color: var(--primary);"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="li_sum_investido_eur" style="color: var(--text-light);">€ 0,00</div>
+                <div class="stat-label">Valor Investido em EUR</div>
+                <i class="fa-solid fa-euro-sign stat-icon" style="color: #10b981;"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="li_sum_total_brl" style="color: var(--primary);">R$ 0,00</div>
+                <div class="stat-label">Total Investido (Eq. BRL)</div>
+                <i class="fa-solid fa-scale-balanced stat-icon" style="color: var(--primary);"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="li_sum_total_eur" style="color: #10b981;">€ 0,00</div>
+                <div class="stat-label">Total Investido (Eq. EUR)</div>
+                <i class="fa-solid fa-globe stat-icon" style="color: #10b981;"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="li_sum_atual" style="color: var(--text-light);">R$ 0,00</div>
+                <div class="stat-label">Valor Atual Total (Ativos)</div>
+                <i class="fa-solid fa-vault stat-icon" style="color: var(--secondary);"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="li_sum_resultado" style="color: var(--success);">R$ 0,00</div>
+                <div class="stat-label">Resultado Total</div>
+                <i class="fa-solid fa-arrow-up-right-dots stat-icon" id="li_res_icon" style="color: var(--success);"></i>
+            </div>
+        </div>
         
         <!-- Formulário -->
         <div class="form-panel">
-            <h3 id="liFormTitle">Novo Lançamento</h3>
+            <h3 id="liFormTitle"><i class="fa-solid fa-pen-to-square" style="margin-right:10px;"></i>Novo Lançamento</h3>
             <form id="liForm" onsubmit="saveLctoInvestimento(event)">
                 <input type="hidden" id="li_id" value="">
-                <div class="form-row">
+                <div class="form-row-2">
                     <div class="form-field">
-                        <label>Banco</label>
-                        <input type="text" id="li_banco" class="auth-input" placeholder="Ex: Nubank, XP, Clear..." required>
+                        <label><i class="fa-solid fa-building-columns"></i> Banco</label>
+                        <select id="li_banco" class="auth-input" required></select>
                     </div>
                     <div class="form-field">
-                        <label>Tipo Investimento</label>
-                        <input type="text" id="li_tp_investimento" class="auth-input" placeholder="Ex: Ações, ETF, FII, Tesouro..." required>
+                        <label><i class="fa-solid fa-tags"></i> Tipo Investimento</label>
+                        <select id="li_tp_investimento" class="auth-input" required></select>
                     </div>
                     <div class="form-field">
-                        <label>Data Investimento</label>
+                        <label><i class="fa-solid fa-calendar-day"></i> Data Investimento</label>
                         <input type="date" id="li_data_inv" class="auth-input" required>
                     </div>
                     <div class="form-field">
-                        <label>Moeda</label>
+                        <label><i class="fa-solid fa-coins"></i> Moeda</label>
                         <select id="li_moeda" class="auth-input">
                             <option value="BRL">BRL</option>
                             <option value="USD">USD</option>
@@ -2144,45 +2237,45 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="form-row-2">
                     <div class="form-field">
-                        <label>Valor Unitário</label>
-                        <input type="number" step="0.01" id="li_valor_inv" class="auth-input" oninput="calcLiTotais()">
+                        <label><i class="fa-solid fa-dollar-sign"></i> Valor Unitário</label>
+                        <input type="number" step="0.01" id="li_valor_inv" class="auth-input" placeholder="0,00" oninput="calcLiTotais()">
                     </div>
                     <div class="form-field">
-                        <label>Quantidade</label>
-                        <input type="number" step="0.0001" id="li_qtd" class="auth-input" oninput="calcLiTotais()">
+                        <label><i class="fa-solid fa-list-ol"></i> Quantidade</label>
+                        <input type="number" step="0.0001" id="li_qtd" class="auth-input" placeholder="0,0000" oninput="calcLiTotais()">
                     </div>
                     <div class="form-field">
-                        <label>Taxa (R$)</label>
+                        <label><i class="fa-solid fa-receipt"></i> Taxas (R$)</label>
                         <input type="number" step="0.01" id="li_taxa" class="auth-input" value="0" oninput="calcLiTotais()">
                     </div>
                     <div class="form-field">
-                        <label>Aporte (R$)</label>
+                        <label><i class="fa-solid fa-hand-holding-dollar"></i> Aporte Mensal (R$)</label>
                         <input type="number" step="0.01" id="li_aporte" class="auth-input" value="0">
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="form-row-2">
                     <div class="form-field">
-                        <label>Valor Atual</label>
-                        <input type="number" step="0.01" id="li_valor_atual" class="auth-input" oninput="calcLiTotais()">
+                        <label><i class="fa-solid fa-chart-line"></i> Valor de Mercado Atual (Un.)</label>
+                        <input type="number" step="0.01" id="li_valor_atual" class="auth-input" placeholder="0,00" oninput="calcLiTotais()">
                     </div>
                     <div class="form-field">
-                        <label>Valor Mês Anterior</label>
+                        <label><i class="fa-solid fa-clock-rotate-left"></i> Valor Mês Anterior</label>
                         <input type="number" step="0.01" id="li_val_mes_ant" class="auth-input" value="0" oninput="calcLiTotais()">
                     </div>
                     <div class="form-field">
-                        <label>Valor Total Investido</label>
-                        <input type="text" id="li_valor_tot_inv" class="auth-input" style="opacity:0.7;" readonly>
+                        <label><i class="fa-solid fa-calculator"></i> Valor Total Investido</label>
+                        <input type="text" id="li_valor_tot_inv" class="auth-input" style="opacity:0.7; background: rgba(0,0,0,0.2);" readonly>
                     </div>
                     <div class="form-field">
-                        <label>Valor Líquido Mês</label>
-                        <input type="text" id="li_valor_liq_mes" class="auth-input" style="opacity:0.7;" readonly>
+                        <label><i class="fa-solid fa-sack-dollar"></i> Valor Líquido Mês</label>
+                        <input type="text" id="li_valor_liq_mes" class="auth-input" style="opacity:0.7; background: rgba(0,0,0,0.2);" readonly>
                     </div>
                 </div>
-                <div style="display:flex;gap:12px;margin-top:1rem;align-items:center;">
-                    <button type="submit" class="btn btn-xs secondary" id="liSaveBtn"><i class="fa-solid fa-plus"></i> Adicionar</button>
-                    <button type="button" class="btn btn-xs secondary" id="liCancelBtn" style="display:none;" onclick="cancelEditLctoInvest()">
+                <div style="display:flex;gap:15px;margin-top:2rem;align-items:center;">
+                    <button type="submit" class="btn btn-sm secondary" id="liSaveBtn"><i class="fa-solid fa-plus"></i> Adicionar Lançamento</button>
+                    <button type="button" class="btn btn-sm" id="liCancelBtn" style="display:none; background: var(--error);" onclick="cancelEditLctoInvest()">
                         <i class="fa-solid fa-xmark"></i> Cancelar
                     </button>
                 </div>
@@ -2190,8 +2283,17 @@
         </div>
 
         <!-- Tabela -->
-        <h3>Lançamentos Cadastrados</h3>
-        <div class="table-container table-full" style="margin-bottom:1rem;">
+        <h3 style="margin: 2.5rem 0 1.5rem; display: flex; align-items: center; gap: 12px;"><i class="fa-solid fa-list-check"></i> Lançamentos Cadastrados</h3>
+        
+        <div class="search-area" style="margin-bottom: 1.5rem; display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px;">
+            <div style="flex:1; position:relative;">
+                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted);"></i>
+                <input type="text" class="auth-input" style="padding-left:40px; margin:0;" placeholder="Pesquisar em bancos, ativos ou datas..." oninput="filterTableGeneric('lctoInvestTable', this.value)">
+            </div>
+            <button class="btn btn-sm secondary" onclick="exportLctoInvestimentos()"><i class="fa-solid fa-file-export"></i> Exportar CSV</button>
+        </div>
+
+        <div class="table-container table-full">
             <table id="lctoInvestTable">
                 <thead>
                     <tr>
@@ -2599,6 +2701,17 @@
                 window.CONTAS_CACHE.map(c => `<option value="${c.descricao}" ${c.descricao===selectedVal?'selected':''}>${c.descricao}</option>`).join('');
         }
 
+        async function loadInvestTypesIntoSelect(selectId, selectedVal) {
+            if(!window.INVEST_TYPES_CACHE) {
+                const res = await fetch('/api/cad_investimentos');
+                window.INVEST_TYPES_CACHE = await res.json();
+            }
+            const sel = document.getElementById(selectId);
+            if(!sel) return;
+            sel.innerHTML = '<option value="">Selecionar tipo...</option>' + 
+                window.INVEST_TYPES_CACHE.map(i => `<option value="${i.descricao}" ${i.descricao===selectedVal?'selected':''}>${i.descricao}</option>`).join('');
+        }
+
         function editConta(id,desc,ag,cnt,ac,sen,obs){
             document.getElementById('cc_id').value=id;
             document.getElementById('cc_desc').value=desc;
@@ -2637,13 +2750,18 @@
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify(payload)
             });
-            if(res.ok){ cancelEditConta(); loadContas(); }
+            if(res.ok){ 
+                cancelEditConta(); 
+                loadContas(); 
+                window.CONTAS_CACHE = null; // Invalidate cache
+            }
         }
 
         async function deleteConta(id){
             if(!confirm('Remover esta conta?')) return;
             await fetch(`/api/cad_contas/${id}`,{method:'DELETE'});
             loadContas();
+            window.CONTAS_CACHE = null; // Invalidate cache
         }
 
         async function uploadContasFile(input){
@@ -2815,13 +2933,18 @@
                 headers:{'Content-Type':'application/json'},
                 body:JSON.stringify(payload)
             });
-            if(res.ok){ cancelEditInvest(); loadInvestimentos(); }
+            if(res.ok){ 
+                cancelEditInvest(); 
+                loadInvestimentos(); 
+                window.INVEST_TYPES_CACHE = null; // Invalidate cache
+            }
         }
 
         async function deleteInvest(id){
             if(!confirm('Remover este investimento?')) return;
             await fetch(`/api/cad_investimentos/${id}`,{method:'DELETE'});
             loadInvestimentos();
+            window.INVEST_TYPES_CACHE = null; // Invalidate cache
         }
 
         async function uploadInvestimentosFile(input){
@@ -5021,13 +5144,17 @@
 
         async function loadLctoInvestimentos() {
             try {
+                await Promise.all([
+                    loadContasIntoSelect('li_banco'),
+                    loadInvestTypesIntoSelect('li_tp_investimento')
+                ]);
                 const res = await fetch('/api/lcto_investimentos');
                 lctoInvestData = await res.json();
                 renderLctoInvestTable();
             } catch(e) { console.error(e); }
         }
 
-        function renderLctoInvestTable() {
+        async function renderLctoInvestTable() {
             const tbody = document.getElementById('lctoInvestTableBody');
             tbody.innerHTML = '';
             lctoInvestData.forEach(d => {
@@ -5065,6 +5192,56 @@
                     </td>
                 </tr>`;
             });
+            await calcLctoInvestSummary();
+        }
+
+        let currentExchangeRate = 0; // BRL -> EUR
+
+        async function calcLctoInvestSummary() {
+            let valorInvestBRL = 0; // Apenas BRL puro
+            let valorInvestEUR = 0; // Apenas EUR puro
+            let valorAtualTotal = 0; // Soma de todos os 'Valor Atual'
+            
+            lctoInvestData.forEach(d => {
+                const totalLinha = (d.valor_inv || 0) * (d.qtd || 0);
+                if (d.moeda === 'EUR') {
+                    valorInvestEUR += totalLinha;
+                } else if (d.moeda === 'BRL') {
+                    valorInvestBRL += totalLinha;
+                }
+                valorAtualTotal += (d.valor_atual || 0);
+            });
+
+            // Buscar cotação atual se não tiver
+            if (currentExchangeRate === 0) {
+                try {
+                    const res = await fetch('/api/cotacao?from=BRL&to=EUR');
+                    const data = await res.json();
+                    currentExchangeRate = data.cotacao || 0.16; // Fallback 0.16
+                } catch(e) { currentExchangeRate = 0.16; }
+            }
+
+            const totalConvertidoBRL = valorInvestBRL + (valorInvestEUR / currentExchangeRate);
+            const totalConvertidoEUR = valorInvestEUR + (valorInvestBRL * currentExchangeRate);
+            const resultadoTotal = valorAtualTotal - totalConvertidoBRL; // Simplificado
+
+            document.getElementById('li_sum_investido_brl').innerText = formatCurrency(valorInvestBRL);
+            document.getElementById('li_sum_investido_eur').innerText = '€ ' + formatCurrency(valorInvestEUR);
+            document.getElementById('li_sum_total_brl').innerText = formatCurrency(totalConvertidoBRL);
+            document.getElementById('li_sum_total_eur').innerText = '€ ' + formatCurrency(totalConvertidoEUR);
+            document.getElementById('li_sum_atual').innerText = formatCurrency(valorAtualTotal);
+            document.getElementById('li_sum_resultado').innerText = formatCurrency(resultadoTotal);
+            
+            const resIcon = document.getElementById('li_res_icon');
+            if (resultado >= 0) {
+                document.getElementById('li_sum_resultado').style.color = 'var(--success)';
+                resIcon.className = 'fa-solid fa-arrow-up-right-dots stat-icon';
+                resIcon.style.color = 'var(--success)';
+            } else {
+                document.getElementById('li_sum_resultado').style.color = 'var(--error)';
+                resIcon.className = 'fa-solid fa-arrow-down-right-dots stat-icon';
+                resIcon.style.color = 'var(--error)';
+            }
         }
 
         function calcLiTotais() {
@@ -5137,6 +5314,8 @@
         function cancelEditLctoInvest() {
             document.getElementById('li_id').value = '';
             document.getElementById('liForm').reset();
+            loadContasIntoSelect('li_banco');
+            loadInvestTypesIntoSelect('li_tp_investimento');
             document.getElementById('liSaveBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Adicionar';
             document.getElementById('liCancelBtn').style.display = 'none';
         }

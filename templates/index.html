@@ -1953,9 +1953,62 @@
 
     <!-- Módulo Impostos -->
     <div class="container module-container module-fullscreen" id="impostosModule" style="display:none;">
-        <h1 style="text-align:center; margin-bottom:0.5rem;"><i class="fa-solid fa-building-columns"></i> Lançamento de Impostos</h1>
+        <h1 style="text-align:center; margin-bottom:1.5rem;"><i class="fa-solid fa-building-columns"></i> Lançamento de Impostos</h1>
+
+        <!-- Banner Simples Nacional -->
+        <div id="simplesNacionalBanner" class="form-panel" style="display: none; border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; color: #f87171;"></i>
+                    <div style="text-align: left;">
+                        <h3 style="margin: 0 0 0.25rem 0; color: #fff; font-size: 1.15rem;">Lembrete: Emitir Guia Simples Nacional</h3>
+                        <p style="margin: 0; font-size: 0.95rem; color: #fca5a5;">Já estamos no período de gerar a sua guia DAS mensal (referente ao mês anterior).</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn btn-sm secondary" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: none;" onclick="desconsiderarSimplesNacional()">
+                        Desconsiderar
+                    </button>
+                    <button class="btn btn-sm" style="background: linear-gradient(135deg, #ef4444, #dc2626);" onclick="iniciarAutomacaoSimples()">
+                        <i class="fa-solid fa-robot"></i> Iniciar Automação
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards de Resumo (Novo) -->
+        <div id="impSummarySection" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                <button class="btn btn-xs secondary" onclick="toggleImpCards()" title="Ocultar/Mostrar Resumo" style="min-width: 160px;">
+                    <i id="toggleImpCardsIcon" class="fa-solid fa-eye-slash"></i> <span id="toggleImpCardsText">Ocultar Resumo</span>
+                </button>
+            </div>
+            
+            <div id="impSummaryCards" class="summary-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Faturado</span>
+                    <h2 id="impSumFaturado" class="stat-value">€ 0,00</h2>
+                    <i class="fa-solid fa-file-invoice-dollar stat-icon"></i>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Total Imposto</span>
+                    <h2 id="impSumImposto" class="stat-value" style="color: var(--error);">€ 0,00</h2>
+                    <i class="fa-solid fa-receipt stat-icon"></i>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Desconto IVA</span>
+                    <h2 id="impSumDesconto" class="stat-value" style="color: var(--success);">€ 0,00</h2>
+                    <i class="fa-solid fa-percent stat-icon"></i>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Valor Líquido</span>
+                    <h2 id="impSumLiquido" class="stat-value" style="color: var(--primary);">€ 0,00</h2>
+                    <i class="fa-solid fa-wallet stat-icon"></i>
+                </div>
+            </div>
+        </div>
         
-        <!-- Dashboard de Impostos -->
+        <!-- Dashboard de Impostos (Antigo, mantido para a aba Dashboard) -->
         <div id="impostosDashboard" style="display:none; margin-bottom:2rem;">
             <h3 style="text-align:center; color:var(--primary); margin-bottom:1rem;">Resumo de Impostos por Tipo</h3>
             <div id="impostosDashboardGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem;"></div>
@@ -1971,9 +2024,10 @@
         <div id="impTabLancamentos">
             <!-- Formulário -->
             <div class="form-panel">
-                <h3 id="impFormTitle" style="margin-bottom:1rem;">Novo Lançamento</h3>
+                <h3 id="impFormTitle"><i class="fa-solid fa-pen-to-square"></i> Novo Lançamento</h3>
                 <form id="impForm" onsubmit="saveImposto(event)">
                     <input type="hidden" id="imp_id" value="">
+                    
                     <div class="form-row">
                         <div class="form-field">
                             <label>Mês/Ano Referência</label>
@@ -1987,13 +2041,14 @@
                         </div>
                         <div class="form-field">
                             <label>Alíquota (%)</label>
-                            <input type="text" id="imp_aliquota" class="auth-input" style="opacity:0.7;" readonly>
+                            <input type="text" id="imp_aliquota" class="auth-input" style="background: rgba(255,255,255,0.05); color: var(--text-muted);" readonly>
                         </div>
                         <div class="form-field">
                             <label>Pagamento</label>
-                            <input type="text" id="imp_pagamento" class="auth-input" style="opacity:0.7;" readonly>
+                            <input type="text" id="imp_pagamento" class="auth-input" style="background: rgba(255,255,255,0.05); color: var(--text-muted);" readonly>
                         </div>
                     </div>
+
                     <div class="form-row">
                         <div class="form-field">
                             <label>Moeda Faturado</label>
@@ -2005,18 +2060,19 @@
                         </div>
                         <div class="form-field">
                             <label>Valor Faturado</label>
-                            <input type="number" step="0.01" id="imp_valor_faturado" class="auth-input" oninput="calcImpValor()" required>
+                            <input type="number" step="0.01" id="imp_valor_faturado" class="auth-input" placeholder="0.00" oninput="calcImpValor()" required>
                         </div>
                         <div class="form-field">
                             <label>Valor Imposto</label>
-                            <input type="number" step="0.01" id="imp_valor_imposto" class="auth-input" style="opacity:0.7;" readonly>
+                            <input type="number" step="0.01" id="imp_valor_imposto" class="auth-input" style="background: rgba(255,255,255,0.05); color: var(--primary); font-weight: 600;" readonly>
                         </div>
                         <div class="form-field">
                             <label>Desconto IVA</label>
                             <input type="number" step="0.01" id="imp_desconto_iva" class="auth-input" value="0">
                         </div>
                     </div>
-                    <div class="form-row-3">
+
+                    <div class="form-row">
                         <div class="form-field">
                             <label>Moeda Pagamento</label>
                             <select id="imp_moeda_pagamento" class="auth-input">
@@ -2029,9 +2085,11 @@
                             <label>Pagamento Mês/Ano</label>
                             <input type="month" id="imp_pagamento_mes_ano" class="auth-input">
                         </div>
-                        <div style="display:flex; align-items:flex-end; gap:10px;">
-                            <button type="submit" class="btn btn-xs secondary" id="impBtnSubmit"><i class="fa-solid fa-plus"></i> Adicionar</button>
-                            <button type="button" class="btn btn-xs secondary" id="impBtnCancel" style="display:none;" onclick="cancelEditImposto()">
+                        <div class="form-field" style="grid-column: span 2; display: flex; flex-direction: row; align-items: flex-end; gap: 10px;">
+                            <button type="submit" class="btn btn-xs secondary" id="impBtnSubmit" style="flex: 1;">
+                                <i class="fa-solid fa-plus"></i> Adicionar Lançamento
+                            </button>
+                            <button type="button" class="btn btn-xs secondary" id="impBtnCancel" style="display:none; min-width: 50px;" onclick="cancelEditImposto()">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -2190,23 +2248,18 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="li_sum_total_brl" style="color: var(--primary);">R$ 0,00</div>
-                <div class="stat-label">Total Investido (Eq. BRL)</div>
+                <div class="stat-label">Total Investido em BRL</div>
                 <i class="fa-solid fa-scale-balanced stat-icon" style="color: var(--primary);"></i>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="li_sum_total_eur" style="color: #10b981;">€ 0,00</div>
-                <div class="stat-label">Total Investido (Eq. EUR)</div>
+                <div class="stat-label">Total Investido em EUR</div>
                 <i class="fa-solid fa-globe stat-icon" style="color: #10b981;"></i>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="li_sum_atual" style="color: var(--text-light);">R$ 0,00</div>
-                <div class="stat-label">Valor Atual Total (Ativos)</div>
-                <i class="fa-solid fa-vault stat-icon" style="color: var(--secondary);"></i>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="li_sum_resultado" style="color: var(--success);">R$ 0,00</div>
-                <div class="stat-label">Resultado Total</div>
-                <i class="fa-solid fa-arrow-up-right-dots stat-icon" id="li_res_icon" style="color: var(--success);"></i>
+                <div class="stat-value" id="li_sum_cotacao" style="color: var(--warning);">0,00</div>
+                <div class="stat-label">Cotação EUR/BRL</div>
+                <i class="fa-solid fa-coins stat-icon" style="color: var(--warning);"></i>
             </div>
         </div>
         
@@ -2290,7 +2343,7 @@
                 <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted);"></i>
                 <input type="text" class="auth-input" style="padding-left:40px; margin:0;" placeholder="Pesquisar em bancos, ativos ou datas..." oninput="filterTableGeneric('lctoInvestTable', this.value)">
             </div>
-            <button class="btn btn-sm secondary" onclick="exportLctoInvestimentos()"><i class="fa-solid fa-file-export"></i> Exportar CSV</button>
+            <button class="btn btn-sm secondary" onclick="window.location.href='/api/export_lcto_investimentos'"><i class="fa-solid fa-file-excel"></i> Exportar Excel (XLSX)</button>
         </div>
 
         <div class="table-container table-full">
@@ -3433,6 +3486,8 @@
                         </td>
                     </tr>`;
                 }).join('');
+
+                updateImpostosSummary(data);
             } catch(e) {
                 console.error('Erro ao carregar lançamentos:', e);
             }
@@ -3519,15 +3574,52 @@
             if(tab === 'lancamentos') {
                 document.getElementById('impTabLancamentos').style.display = 'block';
                 document.getElementById('impostosDashboard').style.display = 'none';
+                document.getElementById('impSummarySection').style.display = 'block';
                 document.getElementById('impBtnLancamentos').className = 'btn';
                 document.getElementById('impBtnDashboard').className = 'btn secondary';
             } else {
                 document.getElementById('impTabLancamentos').style.display = 'none';
                 document.getElementById('impostosDashboard').style.display = 'block';
+                document.getElementById('impSummarySection').style.display = 'none';
                 document.getElementById('impBtnLancamentos').className = 'btn secondary';
                 document.getElementById('impBtnDashboard').className = 'btn';
                 loadImpostosDashboard();
             }
+        }
+
+        function toggleImpCards() {
+            const cards = document.getElementById('impSummaryCards');
+            const icon = document.getElementById('toggleImpCardsIcon');
+            const text = document.getElementById('toggleImpCardsText');
+            
+            if (cards.style.display === 'none') {
+                cards.style.display = 'grid';
+                icon.className = 'fa-solid fa-eye-slash';
+                text.innerText = 'Ocultar Resumo';
+            } else {
+                cards.style.display = 'none';
+                icon.className = 'fa-solid fa-eye';
+                text.innerText = 'Mostrar Resumo';
+            }
+        }
+
+        function updateImpostosSummary(data) {
+            let totalFat = 0;
+            let totalImp = 0;
+            let totalDes = 0;
+
+            data.forEach(d => {
+                totalFat += d.valor_faturado || 0;
+                totalImp += d.valor_imposto || 0;
+                totalDes += d.desconto_iva || 0;
+            });
+
+            const totalLiq = totalImp - totalDes;
+
+            document.getElementById('impSumFaturado').innerText = formatCurrency(totalFat);
+            document.getElementById('impSumImposto').innerText = formatCurrency(totalImp);
+            document.getElementById('impSumDesconto').innerText = formatCurrency(totalDes);
+            document.getElementById('impSumLiquido').innerText = formatCurrency(totalLiq);
         }
 
         async function loadImpostosDashboard() {
@@ -4770,16 +4862,30 @@
             btn.innerText = 'Salvando...';
             
             const rows = [];
-            // Usamos o mês_referencia do upload (ou atual se vazio)
             let mesRef = new Date().toISOString().substring(0, 7);
-            if(parsedTransactions.length > 0) {
-                const parts = parsedTransactions[0].data.split('/');
-                if(parts.length === 3) mesRef = `${parts[2]}-${parts[1]}`;
+            if(parsedTransactions.length > 0 && parsedTransactions[0].data) {
+                const firstData = parsedTransactions[0].data;
+                if (firstData.includes('-') && firstData.length >= 7) {
+                    mesRef = firstData.substring(0, 7);
+                } else if (firstData.includes('/')) {
+                    const parts = firstData.split('/');
+                    if(parts.length === 3) mesRef = `${parts[2]}-${parts[1]}`;
+                }
             }
 
             parsedTransactions.forEach(trx => {
                 const tr = document.querySelector(`tr[data-id="${trx.id}"]`);
                 if (!tr) return;
+                
+                let trxMesRef = mesRef;
+                if(trx.data && trx.data.length >= 7) {
+                    if (trx.data.includes('-')) {
+                        trxMesRef = trx.data.substring(0, 7);
+                    } else if (trx.data.includes('/')) {
+                        const parts = trx.data.split('/');
+                        if(parts.length === 3) trxMesRef = `${parts[2]}-${parts[1]}`;
+                    }
+                }
                 
                 rows.push({
                     data: trx.data,
@@ -4796,7 +4902,7 @@
                     receita: tr.querySelector(`#rec_${trx.id}`).checked ? 1 : 0,
                     conta_bancaria: tr.querySelector(`#cta_${trx.id}`).value,
                     comentarios: tr.querySelector(`#com_${trx.id}`).value,
-                    mes_referencia: mesRef
+                    mes_referencia: trxMesRef
                 });
             });
 
@@ -5198,9 +5304,8 @@
         let currentExchangeRate = 0; // BRL -> EUR
 
         async function calcLctoInvestSummary() {
-            let valorInvestBRL = 0; // Apenas BRL puro
-            let valorInvestEUR = 0; // Apenas EUR puro
-            let valorAtualTotal = 0; // Soma de todos os 'Valor Atual'
+            let valorInvestBRL = 0; 
+            let valorInvestEUR = 0; 
             
             lctoInvestData.forEach(d => {
                 const totalLinha = (d.valor_inv || 0) * (d.qtd || 0);
@@ -5209,39 +5314,25 @@
                 } else if (d.moeda === 'BRL') {
                     valorInvestBRL += totalLinha;
                 }
-                valorAtualTotal += (d.valor_atual || 0);
             });
 
-            // Buscar cotação atual se não tiver
+            // Buscar cotação atual EUR -> BRL se não tiver
             if (currentExchangeRate === 0) {
                 try {
-                    const res = await fetch('/api/cotacao?from=BRL&to=EUR');
+                    const res = await fetch('/api/cotacao?from=EUR&to=BRL');
                     const data = await res.json();
-                    currentExchangeRate = data.cotacao || 0.16; // Fallback 0.16
-                } catch(e) { currentExchangeRate = 0.16; }
+                    currentExchangeRate = data.cotacao || 6.00; // Fallback 6.00
+                } catch(e) { currentExchangeRate = 6.00; }
             }
 
-            const totalConvertidoBRL = valorInvestBRL + (valorInvestEUR / currentExchangeRate);
-            const totalConvertidoEUR = valorInvestEUR + (valorInvestBRL * currentExchangeRate);
-            const resultadoTotal = valorAtualTotal - totalConvertidoBRL; // Simplificado
+            const totalConvertidoBRL = valorInvestBRL + (valorInvestEUR * currentExchangeRate);
+            const totalConvertidoEUR = valorInvestEUR + (valorInvestBRL / currentExchangeRate);
 
             document.getElementById('li_sum_investido_brl').innerText = formatCurrency(valorInvestBRL);
             document.getElementById('li_sum_investido_eur').innerText = '€ ' + formatCurrency(valorInvestEUR);
             document.getElementById('li_sum_total_brl').innerText = formatCurrency(totalConvertidoBRL);
             document.getElementById('li_sum_total_eur').innerText = '€ ' + formatCurrency(totalConvertidoEUR);
-            document.getElementById('li_sum_atual').innerText = formatCurrency(valorAtualTotal);
-            document.getElementById('li_sum_resultado').innerText = formatCurrency(resultadoTotal);
-            
-            const resIcon = document.getElementById('li_res_icon');
-            if (resultado >= 0) {
-                document.getElementById('li_sum_resultado').style.color = 'var(--success)';
-                resIcon.className = 'fa-solid fa-arrow-up-right-dots stat-icon';
-                resIcon.style.color = 'var(--success)';
-            } else {
-                document.getElementById('li_sum_resultado').style.color = 'var(--error)';
-                resIcon.className = 'fa-solid fa-arrow-down-right-dots stat-icon';
-                resIcon.style.color = 'var(--error)';
-            }
+            document.getElementById('li_sum_cotacao').innerText = currentExchangeRate.toFixed(4).replace('.', ',');
         }
 
         function calcLiTotais() {
@@ -5635,6 +5726,38 @@
                 }
             } catch(e) { console.error(e); alert('Erro ao exportar para Excel'); }
         }
+
+        // --- Lógica Lembrete Simples Nacional ---
+        function checkSimplesNacionalReminder() {
+            const today = new Date();
+            const day = today.getDate();
+            const yearMonth = today.getFullYear() + '_' + today.getMonth();
+            const isDismissed = localStorage.getItem('simplesNacionalDismissed_' + yearMonth);
+            
+            // Exibe o lembrete se estivermos entre o dia 05 e o dia 10 do mês, e ainda não foi desconsiderado
+            if (day >= 5 && day <= 10 && !isDismissed) {
+                const banner = document.getElementById('simplesNacionalBanner');
+                if(banner) banner.style.display = 'block';
+            }
+        }
+
+        function desconsiderarSimplesNacional() {
+            const today = new Date();
+            const yearMonth = today.getFullYear() + '_' + today.getMonth();
+            // Salva no localStorage para não mostrar mais neste mês
+            localStorage.setItem('simplesNacionalDismissed_' + yearMonth, 'true');
+            const banner = document.getElementById('simplesNacionalBanner');
+            if(banner) banner.style.display = 'none';
+        }
+        
+        function iniciarAutomacaoSimples() {
+            alert("Aviso: O ambiente do robô (Antigravity) precisa ser acionado via prompt.\n\nPor favor, digite no chat do Antigravity:\n'Inicie a automação do Simples Nacional'\n\nO robô abrirá o e-CAC, aguardará seu login e depois processará a geração da sua guia de forma automatizada!");
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkSimplesNacionalReminder();
+        });
+
     </script>
 </body>
 </html>

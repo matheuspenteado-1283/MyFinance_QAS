@@ -22,9 +22,10 @@ def get_exchange_rate(date_str: str, from_currency: str, to_currency: str = "EUR
         
     # Validar se a data é futura, a API pode quebrar, entao usamos a data atual se for
     try:
-        dt = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-        if dt.date() > datetime.date.today():
-            date_str = "latest"
+        if date_str != "latest":
+            dt = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+            if dt.date() > datetime.date.today():
+                date_str = "latest"
     except ValueError:
         return 1.0 # Em caso de erro de data, evitamos travar o processo
 

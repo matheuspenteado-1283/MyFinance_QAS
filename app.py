@@ -348,7 +348,7 @@ def api_totais_receitas():
 @app.route('/api/cotacao', methods=['GET'])
 def api_get_cotacao():
     if 'user_email' not in session: return jsonify({'error': 'Não logado'}), 401
-    date = request.args.get('date', '')
+    date = request.args.get('date') or 'latest'
     from_cur = request.args.get('from', 'BRL')
     to = request.args.get('to', 'EUR')
     try:

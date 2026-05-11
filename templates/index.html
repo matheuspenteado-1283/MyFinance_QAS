@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyFinance</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tom Select para categorias pesquisáveis -->
@@ -14,136 +14,793 @@
     <!-- Chart.js para Dashboard -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+            --secondary: #8b5cf6;
+            --secondary-hover: #7c3aed;
+            --secondary-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
 
+        /* Layout improvements */
+        body {
+            overflow: auto; /* enable both vertical and horizontal scroll */
+        }
+        .module-container {
+            min-height: 100vh;
+            overflow: auto;
+        }
+        .form-row-gap {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-row-gap .form-field {
+            margin-bottom: 0.5rem;
+        }
+        .btn-full {
+            width: 100%;
+            max-width: 340px; /* same width as Despesas Mensais buttons */
+        }
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-bar .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        .upload-area {
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-light);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+            transition: all 0.5s ease;
+        }
+
+        .container.expanded {
+            max-width: 1550px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(59, 130, 246, 0.5);
+            border-radius: 16px;
+            padding: 4rem 3rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background: rgba(15, 23, 42, 0.4);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-text {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .upload-subtext {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        #fileInput { display: none; }
+
+        .btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-family: inherit;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: auto;
+            min-width: 120px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn.secondary { background: var(--secondary-gradient); box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.3); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); filter: brightness(1.1); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { background: var(--text-muted); cursor: not-allowed; opacity: 0.6; transform: none; }
+
+        /* Tabela de Revisão */
+        #reviewSection {
+            display: none; width: 100%; background: #0f172a; padding: 2rem; box-sizing: border-box; animation: fadeIn 0.8s ease-out;
+            position: relative; z-index: 100;
+        }
+
+        #reviewSection.full-screen-mode {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            min-height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        #reviewSection .table-container {
+            width: 100%; height: auto; max-height: none; overflow-x: auto; overflow-y: visible; background: transparent; margin: 0;
+        }
+        
+        #reviewSection h1 { position: sticky; top: 0; background: #0f172a; padding: 1rem 0; z-index: 30; margin: 0; }
+        #reviewSection p { display: none; }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 0.5rem; border-bottom: 1px solid var(--glass-border); }
+        th { 
+            background: rgba(30, 41, 59, 0.95); 
+            backdrop-filter: blur(8px);
+            font-weight: 600; 
+            color: var(--text-muted); 
+            white-space: nowrap; 
+            vertical-align: top; 
+            position: sticky;
+            top: 0; 
+            z-index: 15;
+        }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+        
+        /* Ajuste para evitar sobreposição no Review Section onde o H1 também é sticky */
+        #reviewSection th {
+            top: 70px; /* Altura aproximada do H1 sticky */
+        }
+
+        .filter-input {
+            width: 100%;
+            margin: 4px 0; /* added vertical spacing */
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 0.4rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            height: 2rem; /* larger touch target */
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .filter-input:focus { border-color: var(--primary); outline: none; }
+        .filter-icon {
+            margin-left: 4px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .filter-icon:hover { color: var(--primary); }
+        .filter-input:focus { border-color: var(--primary); outline: none; }
+
+        tfoot th {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            background: rgba(0,0,0,0.3);
+            border-top: 2px solid var(--glass-border);
+        }
+
+        .val-badge {
+            background: rgba(59, 130, 246, 0.15); color: #93c5fd; padding: 0.3rem 0.6rem;
+            border-radius: 6px; font-weight: 500; font-family: monospace; display: inline-block;
+        }
+        .val-badge.debit {
+            background: rgba(239, 68, 68, 0.15); color: #fca5a5;
+        }
+
+        .currency-badge {
+            background: rgba(245, 158, 11, 0.15); color: #fcd34d; padding: 0.3rem 0.6rem;
+            border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+        }
+
+        .val-input {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 0.6rem;
+            border-radius: 8px;
+            width: 80px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .val-input:focus { outline: none; border-color: var(--primary); background: rgba(15, 23, 42, 0.8); }
+
+        /* Estilizando o Tom Select para Dark Theme */
+        .ts-control {
+            background: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 8px !important;
+            color: var(--text-light) !important;
+            min-width: 150px; /* Reduzido de 250px para evitar quebra de tabela */
+        }
+        .ts-control input { color: var(--text-light) !important; }
+        .ts-dropdown {
+            background: #1e293b !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-light) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+        }
+        .ts-dropdown .option { color: var(--text-light) !important; }
+        .ts-dropdown .option:hover, .ts-dropdown .option.active {
+            background: rgba(59, 130, 246, 0.5) !important;
+            color: white !important;
+        }
+
+        .save-indicator {
+            font-size: 0.75rem; color: var(--success); opacity: 0; transition: opacity 0.3s;
+            display: flex; align-items: center; gap: 4px; margin-top: 4px;
+        }
+        .save-indicator.show { opacity: 1; }
+        .btn-group { display: flex; gap: 1rem; justify-content: center; }
+
+        /* Form Fields Padronizados */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-top: 1.25rem;
+        }
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 1.25rem;
+        }
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+            margin-top: 1.25rem;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-field label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .form-field .auth-input {
+            padding: 0.75rem 1rem;
+            min-height: 44px;
+        }
+
+        /* Botões Padronizados */
+        .btn-lg {
+            min-width: 220px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 12px;
+        }
+        .btn-md {
+            min-width: 180px;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+        .btn-sm {
+            min-width: 140px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+        .btn-xs {
+            min-width: 110px; /* Aumentado de 80px conforme Skill UI UX */
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        /* Module Container Full Screen */
+        .module-fullscreen {
+            max-width: 1550px;
+            width: 100%;
+            min-height: calc(100vh - 100px);
+            /* overflow-x: auto; - Removido para permitir scroll natural se possível */
+            /* overflow-y: auto; - Removido para permitir scroll natural se possível */
+        }
+
+        .module-fullscreen.no-limits {
+            max-width: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* Form Panel Padronizado (Premium Card) */
+        .form-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        .form-panel:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(30, 41, 59, 0.5);
+        }
+        .form-panel h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Action Bar Padronizada */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            justify-content: space-between;
+        }
+        .action-bar-left {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .action-bar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Table Container Full */
+        .table-full {
+            max-height: calc(100vh - 380px);
+            overflow-x: auto;
+            overflow-y: auto;
+            margin-bottom: 2rem;
+        }
+
+        .loader {
+            display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Auth Styles */
+        #loginContainer {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+            margin-top: 5vh;
+        }
+        
+        #mainContainer {
+            display: none; /* Escondido por padrão, mostrado após o login */
+        }
+
+        .user-nav {
+            display: none; /* Mostrado após o login */
+            width: 100%;
+            max-width: 1550px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-nav-text {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 1.5rem;
+        }
+        .auth-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        input[type="month"] {
+            color-scheme: dark;
+        }
+        input[type="month"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        .auth-links {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+        .auth-links:hover {
+            color: var(--primary);
+        }
+        #loginError {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .back-icon-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-icon-btn:hover {
+            background: var(--glass-bg);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* Menu Styles */
+        #menuContainer {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .menu-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+            box-shadow: 0 20px 30px -5px rgba(59, 130, 246, 0.3);
+        }
+        .menu-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        .menu-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        
+        /* Modulos Wrapper */
+        .module-container {
+            display: none;
+            width: 100%;
+        }
+
+        #placeholderModule {
+            text-align: center;
+            padding: 5rem 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .sort-icon {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .sort-icon:hover {
+            color: var(--primary) !important;
+        }
+        th .filter-input {
+            margin-top: 4px;
+        }
+
+        /* Summary Cards Styles (Premium) */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 120px;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--primary);
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.5px;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .stat-icon {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            opacity: 0.15;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover .stat-icon {
+            opacity: 0.3;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+    </style>
 </head>
 <body>
 
-    <!-- Container de Login -->
-    <div id="loginContainer" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem;">
-        <div class="card animate-fade" style="width: 100%; max-width: 420px; text-align: center; padding: 3rem; position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -20%; right: -20%; width: 200px; height: 200px; background: var(--primary-gradient); opacity: 0.1; border-radius: 50%; filter: blur(40px);"></div>
-            
-            <div style="width: 80px; height: 80px; background: var(--primary-gradient); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 10px 20px rgba(255, 126, 95, 0.3);">
-                <i class="fa-solid fa-vault" style="font-size: 2.5rem; color: white;"></i>
-            </div>
-            
-            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -1px;">MyFinance</h1>
-            <p style="margin-bottom: 2.5rem; color: var(--text-muted); font-size: 1.1rem;" id="authSubtitle">A sua carteira digital inteligente</p>
-            
-            <form class="auth-form" id="authForm" onsubmit="handleAuth(event)">
-                <div class="form-field" style="margin-bottom: 1rem;">
-                    <input type="email" id="authEmail" class="input-styled" placeholder="Seu e-mail" required>
-                </div>
-                <div class="form-field" style="margin-bottom: 1.5rem;">
-                    <input type="password" id="authPassword" class="input-styled" placeholder="Sua senha" required>
-                </div>
-                <button type="submit" class="btn btn-primary" id="authBtn" style="width: 100%; height: 55px; font-size: 1.1rem;">
-                    Acessar Minha Conta
-                </button>
-                <div id="loginError" style="color: var(--danger); font-size: 0.9rem; margin-top: 1.25rem; display: none;"></div>
-            </form>
-            
-            <div class="auth-links" id="toggleAuthMode" onclick="toggleAuthMode()" style="margin-top: 2rem; color: var(--text-dim); cursor: pointer; font-size: 0.95rem;">
-                Ainda não tem acesso? <span style="color: var(--primary); font-weight: 600;">Crie sua conta.</span>
-            </div>
+    <div class="user-nav" id="userNav" style="display: none;">
+        <button class="back-icon-btn" id="backMenuBtn" onclick="returnToMenu()" style="display: none;" title="Voltar ao Início">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div style="display: flex; align-items: center; gap: 15px; margin-left: auto;">
+            <span class="user-nav-text" id="userNameLabel">Carregando...</span>
+            <button class="logout-btn" id="logoutBtn" onclick="logOut()">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </button>
         </div>
     </div>
 
-    <!-- Wrapper Principal do App -->
-    <div id="appWrapper" class="app-wrapper" style="display: none;">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <i class="fa-solid fa-vault" style="font-size: 1.5rem; color: var(--primary);"></i>
-                <span class="sidebar-logo">MyFinance</span>
-            </div>
-            <nav class="nav-group">
-                <div class="nav-label">Principal</div>
-                <a onclick="openModule('dashboard')" class="nav-item active" id="nav-dashboard">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a onclick="openModule('extratos')" class="nav-item" id="nav-extratos">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                    <span>Extração Extratos</span>
-                </a>
-                
-                <div class="nav-label">Finanças</div>
-                <a onclick="openModule('despesas_mensais')" class="nav-item" id="nav-despesas_mensais">
-                    <i class="fa-solid fa-wallet"></i>
-                    <span>Despesas Mensais</span>
-                </a>
-                <a onclick="openModule('receitas_mensais')" class="nav-item" id="nav-receitas_mensais">
-                    <i class="fa-solid fa-coins"></i>
-                    <span>Receitas Mensais</span>
-                </a>
-                <a onclick="openModule('investimentos')" class="nav-item" id="nav-investimentos">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Investimentos</span>
-                </a>
-                
-                <div class="nav-label">Relatórios</div>
-                <a onclick="openModule('relatorio_mes')" class="nav-item" id="nav-relatorio_mes">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <span>Relatório Mensal</span>
-                </a>
-                <a onclick="openModule('relatorio_ano')" class="nav-item" id="nav-relatorio_ano">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    <span>Relatório Anual</span>
-                </a>
-                <a onclick="openModule('relatorio_dinamico')" class="nav-item" id="nav-relatorio_dinamico">
-                    <i class="fa-solid fa-table-columns"></i>
-                    <span>Relatório Dinâmico</span>
-                </a>
+    <!-- Container de Login -->
+    <div id="loginContainer">
+        <h1 style="font-size: 1.8rem;">MyFinance</h1>
+        <p style="font-size: 1rem;" id="authSubtitle">Faça login para acessar o sistema.</p>
+        
+        <form class="auth-form" id="authForm" onsubmit="handleAuth(event)">
+            <input type="email" id="authEmail" class="auth-input" placeholder="Seu e-mail" required>
+            <input type="password" id="authPassword" class="auth-input" placeholder="Sua senha" required>
+            <button type="submit" class="btn btn-xs secondary" id="authBtn">Entrar</button>
+            <div id="loginError"></div>
+        </form>
+        
+        <div class="auth-links" id="toggleAuthMode" onclick="toggleAuthMode()">
+            Não tem uma conta? Crie uma aqui.
+        </div>
+    </div>
 
-                <div class="nav-label">Operacional</div>
-                <a onclick="openModule('impostos')" class="nav-item" id="nav-impostos">
-                    <i class="fa-solid fa-building-columns"></i>
-                    <span>Impostos</span>
-                </a>
-                <a onclick="openModule('emprestimos')" class="nav-item" id="nav-emprestimos">
-                    <i class="fa-solid fa-money-bill-transfer"></i>
-                    <span>Empréstimos</span>
-                </a>
-                <a onclick="openModule('trader')" class="nav-item" id="nav-trader">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    <span>Trader</span>
-                </a>
-                
-                <div class="nav-label">Sistema</div>
-                <a onclick="openModule('configuracoes')" class="nav-item" id="nav-configuracoes">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Configurações</span>
-                </a>
-                <a onclick="openModule('acessos')" class="nav-item" id="nav-acessos">
-                    <i class="fa-solid fa-users-gear"></i>
-                    <span>Acessos</span>
-                </a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar" id="userInitial">M</div>
-                    <div class="user-info">
-                        <div class="user-name" id="userNameSidebar">Carregando...</div>
-                    </div>
-                    <button onclick="logOut()" class="nav-item" style="padding: 8px; margin: 0; min-width: auto; background: transparent; color: var(--danger);" title="Sair">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
+    <!-- Container Principal do Menu -->
+    <div id="menuContainer">
+        <h1 style="text-align: center; margin-bottom: 2rem;">MyFinance</h1>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="openModule('extratos')">
+                <i class="fa-solid fa-file-invoice-dollar menu-icon"></i>
+                <div class="menu-title">Upload de Extratos</div>
             </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content" id="mainContent">
-            <!-- All modules will be injected here via the existing module switching logic, but wrapped in cards where appropriate -->
-            
-            <div id="menuContainer" style="display: none;">
-                <!-- We'll keep this but the Sidebar will be the main nav -->
-                <h1>Bem-vindo ao MyFinance</h1>
-                <p>Use o menu lateral para navegar entre os módulos.</p>
+            <div class="menu-card" onclick="openModule('despesas_mensais')">
+                <i class="fa-solid fa-wallet menu-icon"></i>
+                <div class="menu-title">Despesas Mensais</div>
             </div>
-
+            <div class="menu-card" onclick="openModule('relatorio_mes')">
+                <i class="fa-solid fa-calendar-days menu-icon"></i>
+                <div class="menu-title">Relatório Mensal</div>
+            </div>
+            <div class="menu-card" onclick="openModule('relatorio_ano')">
+                <i class="fa-solid fa-calendar-check menu-icon"></i>
+                <div class="menu-title">Relatório Anual</div>
+            </div>
+            <div class="menu-card" onclick="openModule('relatorio_dinamico')">
+                <i class="fa-solid fa-table-columns menu-icon"></i>
+                <div class="menu-title">Relatório Dinâmico</div>
+            </div>
+            <div class="menu-card" onclick="openModule('dashboard')">
+                <i class="fa-solid fa-chart-pie menu-icon"></i>
+                <div class="menu-title">Dashboard</div>
+            </div>
+            <div class="menu-card" onclick="openModule('receitas_mensais')">
+                <i class="fa-solid fa-coins menu-icon"></i>
+                <div class="menu-title">Receitas Mensais</div>
+            </div>
+            <div class="menu-card" onclick="openModule('impostos')">
+                <i class="fa-solid fa-building-columns menu-icon"></i>
+                <div class="menu-title">Impostos</div>
+            </div>
+            <div class="menu-card" onclick="openModule('emprestimos')">
+                <i class="fa-solid fa-money-bill-transfer menu-icon"></i>
+                <div class="menu-title">Empréstimos</div>
+            </div>
+            <div class="menu-card" onclick="openModule('investimentos')">
+                <i class="fa-solid fa-chart-line menu-icon"></i>
+                <div class="menu-title">Investimentos</div>
+            </div>
+            <div class="menu-card" onclick="openModule('lcto_investimentos')">
+                <i class="fa-solid fa-coins menu-icon"></i>
+                <div class="menu-title">Lançamentos Invest.</div>
+            </div>
+            <div class="menu-card" onclick="openModule('trader')">
+                <i class="fa-solid fa-arrow-trend-up menu-icon"></i>
+                <div class="menu-title">Trader</div>
+            </div>
+            <div class="menu-card" onclick="openModule('acessos')">
+                <i class="fa-solid fa-users-gear menu-icon"></i>
+                <div class="menu-title">Acessos</div>
+            </div>
+            <div class="menu-card" onclick="openModule('configuracoes')">
+                <i class="fa-solid fa-gear menu-icon"></i>
+                <div class="menu-title">Configurações</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Módulo Temporário (Em Construção) -->
     <div class="container module-container module-fullscreen" id="placeholderModule">
@@ -756,53 +1413,25 @@
             </div>
         </div>
 
-        <!-- Cards de Valores Premium -->
-        <div class="stats-grid">
-            <div class="card stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon-wrapper" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
-                        <i class="fa-solid fa-money-bill-wave"></i>
-                    </div>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Total em BRL</div>
-                    <div class="stat-value" id="dmTotalBrl" style="color: var(--danger);">R$ 0,00</div>
-                </div>
+        <!-- Cards de Valores -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1.5rem; margin-top:0.5rem;">
+            <div style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:12px; padding:1rem; text-align:center;">
+                <span style="font-size:0.75rem; color:#fca5a5; text-transform:uppercase; display:block;">Total BRL</span>
+                <h3 id="dmTotalBrl" style="margin:0.5rem 0 0; color:#fca5a5; font-size:1.25rem;">R$ 0,00</h3>
             </div>
-            <div class="card stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon-wrapper" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
-                        <i class="fa-solid fa-euro-sign"></i>
-                    </div>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Total em EUR</div>
-                    <div class="stat-value" id="dmTotalEur" style="color: var(--primary);">€ 0,00</div>
-                </div>
+            <div style="background:rgba(59, 130, 246, 0.15); border:1px solid rgba(59, 130, 246, 0.3); border-radius:12px; padding:1rem; text-align:center;">
+                <span style="font-size:0.75rem; color:#93c5fd; text-transform:uppercase; display:block;">Total EUR</span>
+                <h3 id="dmTotalEur" style="margin:0.5rem 0 0; color:#93c5fd; font-size:1.25rem;">€ 0,00</h3>
             </div>
-            <div class="card stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: var(--secondary);">
-                        <i class="fa-solid fa-scale-balanced"></i>
-                    </div>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Total Convertido</div>
-                    <div class="stat-value" id="dmTotalConvertido" style="color: var(--secondary);">€ 0,00</div>
-                </div>
+            <div style="background:rgba(139, 92, 246, 0.15); border:1px solid rgba(139, 92, 246, 0.3); border-radius:12px; padding:1rem; text-align:center;">
+                <span style="font-size:0.75rem; color:#c4b5fd; text-transform:uppercase; display:block;">Total Convertido</span>
+                <h3 id="dmTotalConvertido" style="margin:0.5rem 0 0; color:#c4b5fd; font-size:1.25rem;">€ 0,00</h3>
             </div>
-            <div class="card stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon-wrapper" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);">
-                        <i class="fa-solid fa-arrows-rotate"></i>
-                    </div>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Câmbio BRL x EUR</div>
-                    <div class="stat-value" id="dmCambio" style="color: var(--accent);">1,00</div>
-                </div>
+            <div style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3); border-radius:12px; padding:1rem; text-align:center;">
+                <span style="font-size:0.75rem; color:#fcd34d; text-transform:uppercase; display:block;">Conversão BRL x EUR</span>
+                <h3 id="dmCambio" style="margin:0.5rem 0 0; color:#fcd34d; font-size:1.25rem;">1,00</h3>
             </div>
-        </div>
+</div>
 
         <!-- Total por Pagador e por Moeda -->
         <div id="dmSummaryContainer" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem; margin-bottom:1rem;">
@@ -2141,9 +2770,6 @@
         </div>
     </div>
 
-        </main>
-    </div>
-
     <script>
 // =====================================================================
         // LOCAL AUTHENTICATION LOGIC
@@ -2225,10 +2851,7 @@
                 if(res.ok) {
                     const data = await res.json();
                     if(data.logged_in) {
-                        document.getElementById('userNameSidebar').innerText = data.email;
-                        document.getElementById('userInitial').innerText = data.email[0].toUpperCase();
-                        document.getElementById('loginContainer').style.display = 'none';
-                        document.getElementById('appWrapper').style.display = 'flex';
+                        document.getElementById('userNameLabel').innerText = `Bem-vindo(a), ${data.email}`;
                         returnToMenu(); // Mostra o menu inicial
                     } else {
                         showLoginUI();
@@ -2242,36 +2865,32 @@
         }
 
         function openModule(moduleKey) {
-            // Hide all modules
-            document.querySelectorAll('.module-container').forEach(el => el.style.display = 'none');
             document.getElementById('menuContainer').style.display = 'none';
-            
-            // Highlight sidebar item
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            const navItem = document.getElementById('nav-' + moduleKey);
-            if (navItem) navItem.classList.add('active');
+            document.querySelectorAll('.module-container').forEach(el => el.style.display = 'none');
+            document.getElementById('backMenuBtn').style.display = 'flex';
+            let nav = document.getElementById('userNav');
+            nav.style.maxWidth = '1550px';
 
             const moduleMap = {
                 'extratos':          () => document.getElementById('extratosModule').style.display = 'block',
-                'configuracoes':     () => document.getElementById('configuracoesModule').style.display = 'block',
-                'cad_despesas':      () => { document.getElementById('cadDespesasModule').style.display = 'block'; loadDespesas(); },
-                'cad_contas':        () => { document.getElementById('cadContasModule').style.display = 'block'; loadContas(); },
-                'cad_receitas':      () => { document.getElementById('cadReceitasModule').style.display = 'block'; loadReceitas(); },
-                'cad_investimentos': () => { document.getElementById('cadInvestimentosModule').style.display = 'block'; loadInvestimentos(); },
-                'cad_tipo_imposto': () => { document.getElementById('cadTipoImpostoModule').style.display = 'block'; loadTipoImposto(); },
-                'cad_usuarios':      () => { document.getElementById('cadUsuariosModule').style.display = 'block'; loadUsuarios(); },
-                'despesas_mensais':  () => { document.getElementById('despesasMensaisModule').style.display = 'block'; initDespesasMensais(); },
-                'receitas_mensais':  () => { document.getElementById('receitasMensaisModule').style.display = 'block'; initReceitasMensais(); },
-                'dashboard':         () => { document.getElementById('dashboardModule').style.display = 'block'; loadDashboard(); },
-                'relatorio_ano':     () => { document.getElementById('relatorioAnoModule').style.display = 'block'; loadRelatorioAnual(); },
-                'relatorio_mes':     () => { document.getElementById('relatorioMesModule').style.display = 'block'; loadRelatorioMensal(); },
-                'relatorio_dinamico': () => { document.getElementById('relatorioDinamicoModule').style.display = 'block'; initRelatorioDinamico(); },
-                'impostos':          () => { document.getElementById('impostosModule').style.display = 'block'; Promise.resolve(initImpostos()).catch(err => console.error('Erro ao abrir Impostos:', err)); },
-                'emprestimos':       () => { document.getElementById('emprestimosModule').style.display = 'block'; Promise.resolve(loadEmprestimos()).catch(err => console.error('Erro ao abrir Empréstimos:', err)); },
-                'trader':            () => { document.getElementById('traderModule').style.display = 'block'; Promise.resolve(initTrader()).catch(err => console.error('Erro ao abrir Trader:', err)); },
-                'lcto_investimentos': () => { document.getElementById('lctoInvestimentosModule').style.display = 'block'; loadLctoInvestimentos(); },
-                'avancado':          () => { document.getElementById('avancadoModule').style.display = 'block'; },
-                'acessos':           () => { document.getElementById('placeholderModule').style.display = 'block'; document.getElementById('placeholderTitle').innerText = 'Acessos'; },
+                'configuracoes':     () => { document.getElementById('configuracoesModule').style.display = 'block'; nav.style.maxWidth = '1200px'; },
+                'cad_despesas':      () => { document.getElementById('cadDespesasModule').style.display = 'block'; nav.style.maxWidth = '1200px'; loadDespesas(); },
+                'cad_contas':        () => { document.getElementById('cadContasModule').style.display = 'block'; nav.style.maxWidth = '1200px'; loadContas(); },
+                'cad_receitas':      () => { document.getElementById('cadReceitasModule').style.display = 'block'; nav.style.maxWidth = '900px'; loadReceitas(); },
+                'cad_investimentos': () => { document.getElementById('cadInvestimentosModule').style.display = 'block'; nav.style.maxWidth = '900px'; loadInvestimentos(); },
+                'cad_tipo_imposto': () => { document.getElementById('cadTipoImpostoModule').style.display = 'block'; nav.style.maxWidth = '1000px'; loadTipoImposto(); },
+                'cad_usuarios':      () => { document.getElementById('cadUsuariosModule').style.display = 'block'; nav.style.maxWidth = '1100px'; loadUsuarios(); },
+                'despesas_mensais':  () => { document.getElementById('despesasMensaisModule').style.display = 'block'; nav.style.maxWidth = '1550px'; initDespesasMensais(); },
+                'receitas_mensais':  () => { document.getElementById('receitasMensaisModule').style.display = 'block'; nav.style.maxWidth = '1550px'; initReceitasMensais(); },
+                'dashboard':         () => { document.getElementById('dashboardModule').style.display = 'block'; nav.style.maxWidth = '1400px'; loadDashboard(); },
+                'relatorio_ano':     () => { document.getElementById('relatorioAnoModule').style.display = 'block'; nav.style.maxWidth = '1100px'; loadRelatorioAnual(); },
+                'relatorio_mes':     () => { document.getElementById('relatorioMesModule').style.display = 'block'; nav.style.maxWidth = '1100px'; loadRelatorioMensal(); },
+                'relatorio_dinamico': () => { document.getElementById('relatorioDinamicoModule').style.display = 'block'; nav.style.maxWidth = '1400px'; initRelatorioDinamico(); },
+                'impostos':          () => { document.getElementById('impostosModule').style.display = 'block'; nav.style.maxWidth = '1200px'; initImpostos(); },
+                'emprestimos':       () => { document.getElementById('emprestimosModule').style.display = 'block'; nav.style.maxWidth = '1200px'; initEmprestimos(); loadEmprestimos(); },
+                'trader':            () => { document.getElementById('traderModule').style.display = 'block'; nav.style.maxWidth = '1550px'; initTrader(); },
+                'lcto_investimentos': () => { document.getElementById('lctoInvestimentosModule').style.display = 'block'; nav.style.maxWidth = '1550px'; loadLctoInvestimentos(); },
+                'avancado':          () => { document.getElementById('avancadoModule').style.display = 'block'; nav.style.maxWidth = '800px'; },
             };
 
             if (moduleMap[moduleKey]) {
@@ -2281,11 +2900,6 @@
                 document.getElementById('placeholderModule').style.display = 'block';
                 document.getElementById('placeholderTitle').innerText = MODULE_NAMES[moduleKey] || 'Módulo';
             }
-            
-            // Scroll to top of main content
-            const mainContent = document.getElementById('mainContent');
-            if (mainContent) mainContent.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function loadDespesas() {
@@ -3096,31 +3710,33 @@
 
         function returnToMenu() {
             document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('appWrapper').style.display = 'flex';
-            openModule('dashboard');
+            document.querySelectorAll('.module-container').forEach(el => el.style.display = 'none');
+            document.getElementById('menuContainer').style.display = 'block';
             
+            let nav = document.getElementById('userNav');
+            nav.style.display = 'flex';
+            nav.style.maxWidth = '1200px'; 
+            document.getElementById('backMenuBtn').style.display = 'none';
+
             // Reset layout limits
             document.getElementById('extratosModule').classList.remove('no-limits');
             const reviewSection = document.getElementById('reviewSection');
-            if (reviewSection) {
-                reviewSection.classList.remove('full-screen-mode');
-                reviewSection.style.display = 'none';
-            }
-            const uploadSection = document.getElementById('uploadSection');
-            if (uploadSection) uploadSection.style.display = 'block';
+            reviewSection.classList.remove('full-screen-mode');
+            reviewSection.style.display = 'none';
+            document.getElementById('uploadSection').style.display = 'block';
         }
 
         function showLoginUI() {
-            document.getElementById('loginContainer').style.display = 'flex';
-            document.getElementById('appWrapper').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('menuContainer').style.display = 'none';
             document.querySelectorAll('.module-container').forEach(el => el.style.display = 'none');
+            document.getElementById('userNav').style.display = 'none';
         }
 
         async function logOut() {
             await fetch('/logout', { method: 'POST' });
-            if (typeof parsedTransactions !== 'undefined') parsedTransactions = [];
-            const tableBody = document.getElementById('tableBody');
-            if (tableBody) tableBody.innerHTML = '';
+            parsedTransactions = [];
+            document.getElementById('tableBody').innerHTML = '';
             showLoginUI();
         }
 

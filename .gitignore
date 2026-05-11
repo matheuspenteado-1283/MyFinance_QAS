@@ -4,6 +4,7 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
+*$py.class
 *.egg-info/
 dist/
 build/
@@ -11,6 +12,7 @@ build/
 .venv
 venv/
 env/
+ENV/
 
 # Flask / Runtime
 uploads/
@@ -33,3 +35,8 @@ test_cols.py
 
 # Extratos bancários (dados pessoais)
 MyFinance/
+
+# IDE
+.vscode/
+.idea/
+.gemini/

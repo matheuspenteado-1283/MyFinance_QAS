@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.env
+.venv
+venv/
+env/
+
+# Flask / Runtime
+uploads/
+app.log
+*.log
+
+# Banco de dados (dados pessoais — não versionar)
+*.db
+*.sqlite
+*.sqlite3
+
+# macOS
+.DS_Store
+
+# Arquivos de debug/scratch
+scratch/
+fix_app.py
+test_*.py
+test_cols.py
+
+# Extratos bancários (dados pessoais)
+MyFinance/

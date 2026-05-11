@@ -738,6 +738,379 @@ textarea.auth-input:focus {
     overflow: hidden;
 }
 
+/* Liquid Finance Refresh - UI_UX_ProMax inspired */
+:root {
+    --primary: #00d4ff;
+    --primary-strong: #0891b2;
+    --primary-soft: rgba(103, 232, 249, 0.2);
+    --primary-gradient: linear-gradient(135deg, #00d4ff 0%, #2f80ed 48%, #8b5cf6 100%);
+    --secondary: #00f5a0;
+    --secondary-gradient: linear-gradient(135deg, #00f5a0 0%, #00c9ff 100%);
+    --accent: #ffd166;
+    --accent-hot: #ff4ecd;
+    --danger: #ff4d6d;
+    --error: #ff4d6d;
+    --success: #23d18b;
+    --warning: #ffd166;
+    --bg-dark: #06111f;
+    --sidebar-bg: rgba(6, 17, 31, 0.76);
+    --card-bg: rgba(255, 255, 255, 0.095);
+    --glass-bg: rgba(10, 24, 43, 0.72);
+    --glass-border: rgba(185, 246, 255, 0.22);
+    --text-light: #f7fbff;
+    --text-muted: rgba(226, 246, 255, 0.72);
+    --text-dim: rgba(226, 246, 255, 0.48);
+    --shadow-premium: 0 24px 70px rgba(0, 212, 255, 0.13), 0 16px 42px rgba(0, 0, 0, 0.34);
+    --card-shadow: var(--shadow-premium);
+    --radius-lg: 22px;
+    --radius-md: 12px;
+    --transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html {
+    background: #06111f;
+}
+
+body {
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    background:
+        radial-gradient(circle at 14% 10%, rgba(0, 212, 255, 0.24) 0, transparent 26%),
+        radial-gradient(circle at 88% 12%, rgba(255, 78, 205, 0.18) 0, transparent 28%),
+        radial-gradient(circle at 74% 86%, rgba(0, 245, 160, 0.17) 0, transparent 32%),
+        linear-gradient(145deg, #06111f 0%, #07182d 46%, #0b1027 100%) !important;
+    background-attachment: fixed !important;
+    color: var(--text-light) !important;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    inset: -18%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body::before {
+    background:
+        radial-gradient(circle at 22% 28%, rgba(0, 212, 255, 0.32), transparent 28%),
+        radial-gradient(circle at 76% 24%, rgba(139, 92, 246, 0.28), transparent 26%),
+        radial-gradient(circle at 52% 78%, rgba(0, 245, 160, 0.2), transparent 30%);
+    filter: blur(54px) saturate(1.35);
+    animation: liquidDrift 22s ease-in-out infinite alternate;
+}
+
+body::after {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(circle at center, black, transparent 72%);
+    opacity: 0.55;
+}
+
+@keyframes liquidDrift {
+    0% { transform: translate3d(-2%, -1%, 0) rotate(0deg) scale(1); }
+    50% { transform: translate3d(2%, 3%, 0) rotate(8deg) scale(1.08); }
+    100% { transform: translate3d(1%, -2%, 0) rotate(-6deg) scale(1.03); }
+}
+
+h1 {
+    color: var(--text-light) !important;
+    background: linear-gradient(120deg, #ffffff 0%, #8ef3ff 38%, #00f5a0 72%, #ffd166 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    letter-spacing: 0 !important;
+    font-weight: 800 !important;
+}
+
+h2, h3, h4, .menu-title, .stat-value {
+    letter-spacing: 0 !important;
+}
+
+p, label, .stat-label, .upload-subtext, .user-nav-text {
+    color: var(--text-muted) !important;
+}
+
+#loginContainer,
+#menuContainer,
+.container,
+.card,
+.form-panel,
+.stat-card,
+.menu-card,
+.action-bar,
+.table-container,
+#senhaModal > div {
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.045)) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--shadow-premium) !important;
+    backdrop-filter: blur(24px) saturate(1.45) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(1.45) !important;
+}
+
+#loginContainer,
+.container,
+.form-panel,
+.stat-card,
+.menu-card {
+    border-radius: var(--radius-lg) !important;
+}
+
+#loginContainer {
+    position: relative;
+    overflow: hidden;
+}
+
+#loginContainer::before,
+.menu-card::before,
+.stat-card::before,
+.form-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 38%, rgba(0, 245, 160, 0.12));
+    opacity: 0.56;
+}
+
+.menu-card,
+.stat-card,
+.form-panel {
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-card {
+    min-height: 168px !important;
+    isolation: isolate;
+}
+
+.menu-card:hover,
+.stat-card:hover,
+.form-panel:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(142, 243, 255, 0.72) !important;
+    box-shadow: 0 30px 80px rgba(0, 212, 255, 0.22), 0 20px 48px rgba(0, 0, 0, 0.35) !important;
+}
+
+.menu-card:hover {
+    background:
+        radial-gradient(circle at 20% 0%, rgba(0, 245, 160, 0.18), transparent 42%),
+        linear-gradient(145deg, rgba(0, 212, 255, 0.18), rgba(255, 255, 255, 0.07)) !important;
+}
+
+.menu-icon,
+.upload-icon,
+.form-panel h3 i,
+.stat-icon {
+    color: #67e8f9 !important;
+    filter: drop-shadow(0 0 14px rgba(0, 212, 255, 0.38));
+}
+
+.btn,
+.btn-primary,
+.app-wrapper .btn:not(.nav-item) {
+    background: var(--primary-gradient) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(185, 246, 255, 0.3) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 14px 30px rgba(0, 212, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+    font-weight: 800 !important;
+}
+
+.btn:hover,
+.btn-primary:hover,
+.app-wrapper .btn:not(.nav-item):hover {
+    transform: translateY(-2px) !important;
+    filter: saturate(1.2) brightness(1.08) !important;
+    box-shadow: 0 18px 38px rgba(0, 212, 255, 0.32), 0 0 0 4px rgba(0, 212, 255, 0.08) !important;
+}
+
+.btn.secondary,
+.btn-outline,
+.app-wrapper .btn.secondary:not(.nav-item),
+.app-wrapper .btn-outline:not(.nav-item) {
+    background: rgba(255, 255, 255, 0.075) !important;
+    color: #dffbff !important;
+    border-color: rgba(185, 246, 255, 0.24) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.logout-btn,
+.back-icon-btn {
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+
+.logout-btn {
+    background: rgba(255, 77, 109, 0.12) !important;
+    border-color: rgba(255, 77, 109, 0.34) !important;
+    color: #ffb3c1 !important;
+}
+
+.back-icon-btn {
+    border-radius: 14px !important;
+}
+
+.auth-input,
+.filter-input,
+.input-styled,
+.val-input,
+select.auth-input,
+textarea.auth-input,
+.ts-control {
+    background: rgba(2, 13, 24, 0.54) !important;
+    border: 1px solid rgba(185, 246, 255, 0.22) !important;
+    border-radius: 12px !important;
+    color: var(--text-light) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.auth-input:focus,
+.filter-input:focus,
+.input-styled:focus,
+.val-input:focus,
+select.auth-input:focus,
+textarea.auth-input:focus,
+.ts-control.focus {
+    border-color: rgba(0, 245, 160, 0.7) !important;
+    box-shadow: 0 0 0 4px rgba(0, 245, 160, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.upload-area {
+    border: 1px dashed rgba(103, 232, 249, 0.52) !important;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.14), transparent 48%),
+        rgba(2, 13, 24, 0.34) !important;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: rgba(0, 245, 160, 0.82) !important;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(0, 245, 160, 0.16), transparent 46%),
+        rgba(0, 212, 255, 0.08) !important;
+}
+
+.table-container {
+    border-radius: 18px !important;
+    background: rgba(2, 13, 24, 0.34) !important;
+}
+
+th {
+    background: rgba(6, 17, 31, 0.86) !important;
+    color: #b9f6ff !important;
+    border-bottom-color: rgba(185, 246, 255, 0.18) !important;
+}
+
+td {
+    border-bottom-color: rgba(185, 246, 255, 0.085) !important;
+}
+
+tr:hover td {
+    background: rgba(0, 212, 255, 0.06) !important;
+}
+
+.val-badge,
+.currency-badge {
+    border-radius: 999px !important;
+    border: 1px solid rgba(185, 246, 255, 0.2);
+}
+
+.val-badge {
+    background: rgba(0, 212, 255, 0.13) !important;
+    color: #8ef3ff !important;
+}
+
+.val-badge.debit {
+    background: rgba(255, 77, 109, 0.14) !important;
+    color: #ffb3c1 !important;
+}
+
+.currency-badge {
+    background: rgba(255, 209, 102, 0.16) !important;
+    color: #ffe6a7 !important;
+}
+
+.summary-grid {
+    gap: 1rem !important;
+}
+
+.stat-card {
+    background:
+        radial-gradient(circle at 84% 18%, rgba(0, 212, 255, 0.18), transparent 34%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.045)) !important;
+}
+
+.stat-value {
+    color: #ffffff !important;
+    text-shadow: 0 0 24px rgba(0, 212, 255, 0.18);
+}
+
+.ts-dropdown {
+    background: rgba(6, 17, 31, 0.96) !important;
+    border-color: rgba(185, 246, 255, 0.22) !important;
+    box-shadow: var(--shadow-premium) !important;
+}
+
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active {
+    background: rgba(0, 212, 255, 0.22) !important;
+}
+
+input[type="checkbox"] {
+    accent-color: #00d4ff;
+}
+
+::selection {
+    background: rgba(0, 245, 160, 0.34);
+    color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@media (max-width: 780px) {
+    body {
+        padding: 1rem 0.75rem !important;
+    }
+
+    #loginContainer,
+    .container {
+        padding: 1.25rem !important;
+        border-radius: 18px !important;
+    }
+
+    .menu-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+    }
+
+    .menu-card {
+        min-height: 126px !important;
+        padding: 1.25rem !important;
+    }
+
+    .form-row,
+    .form-row-2,
+    .form-row-3 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .action-bar {
+        align-items: stretch !important;
+    }
+}
+
 #despesasMensaisModule > .action-bar .action-bar-left {
     display: grid;
     grid-template-columns: 150px 160px;
@@ -865,4 +1238,704 @@ textarea.auth-input:focus {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-dim);
+}
+
+/* Final cascade lock for the Liquid Finance theme */
+body {
+    background:
+        radial-gradient(circle at 12% 8%, rgba(0, 212, 255, 0.24) 0, transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(255, 78, 205, 0.18) 0, transparent 30%),
+        radial-gradient(circle at 76% 86%, rgba(0, 245, 160, 0.18) 0, transparent 34%),
+        linear-gradient(145deg, #06111f 0%, #07182d 48%, #0b1027 100%) !important;
+}
+
+h1 {
+    background: linear-gradient(120deg, #ffffff 0%, #8ef3ff 36%, #00f5a0 70%, #ffd166 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+}
+
+#loginContainer,
+#menuContainer,
+.container,
+.form-panel,
+.stat-card,
+.menu-card,
+.action-bar,
+.table-container,
+#senhaModal > div {
+    background:
+        radial-gradient(circle at 16% 0%, rgba(0, 212, 255, 0.15), transparent 40%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05)) !important;
+    border-color: rgba(185, 246, 255, 0.24) !important;
+    box-shadow: 0 24px 70px rgba(0, 212, 255, 0.14), 0 16px 42px rgba(0, 0, 0, 0.36) !important;
+}
+
+.btn,
+.btn-primary,
+.app-wrapper .btn:not(.nav-item) {
+    background: linear-gradient(135deg, #00d4ff 0%, #2f80ed 48%, #8b5cf6 100%) !important;
+}
+
+.btn.secondary,
+.btn-outline {
+    background: linear-gradient(135deg, rgba(0, 245, 160, 0.14), rgba(0, 212, 255, 0.08)) !important;
+}
+
+.menu-card:hover,
+.stat-card:hover,
+.form-panel:hover,
+.upload-area:hover {
+    border-color: rgba(0, 245, 160, 0.72) !important;
+}
+
+.menu-icon,
+.upload-icon,
+.form-panel h3 i,
+.stat-icon {
+    color: #67e8f9 !important;
+}
+
+#authBtn {
+    background: linear-gradient(135deg, #00f5a0 0%, #00d4ff 45%, #8b5cf6 100%) !important;
+    border-color: rgba(185, 246, 255, 0.42) !important;
+    box-shadow: 0 16px 34px rgba(0, 212, 255, 0.3), 0 0 0 1px rgba(0, 245, 160, 0.12) inset !important;
+}
+
+/* Banking Liquid Glass - sober industry palette */
+:root {
+    --primary: #2dd4bf;
+    --primary-strong: #0f766e;
+    --primary-soft: rgba(45, 212, 191, 0.16);
+    --primary-gradient: linear-gradient(135deg, #2dd4bf 0%, #0f766e 100%);
+    --secondary: #38bdf8;
+    --secondary-gradient: linear-gradient(135deg, #1e3a5f 0%, #0f766e 100%);
+    --accent: #d4af37;
+    --accent-hot: #d4af37;
+    --danger: #b91c1c;
+    --error: #dc2626;
+    --success: #16a34a;
+    --warning: #d4af37;
+    --bg-dark: #07111f;
+    --sidebar-bg: rgba(5, 12, 24, 0.84);
+    --card-bg: rgba(255, 255, 255, 0.07);
+    --glass-bg: rgba(9, 20, 35, 0.76);
+    --glass-border: rgba(203, 213, 225, 0.18);
+    --text-light: #f8fafc;
+    --text-muted: rgba(226, 232, 240, 0.72);
+    --text-dim: rgba(226, 232, 240, 0.46);
+    --shadow-premium: 0 24px 64px rgba(2, 6, 23, 0.42), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    --card-shadow: var(--shadow-premium);
+    --radius-lg: 18px;
+    --radius-md: 10px;
+}
+
+body {
+    background:
+        radial-gradient(circle at 12% 8%, rgba(45, 212, 191, 0.14) 0, transparent 30%),
+        radial-gradient(circle at 92% 12%, rgba(56, 189, 248, 0.1) 0, transparent 28%),
+        radial-gradient(circle at 72% 86%, rgba(212, 175, 55, 0.08) 0, transparent 34%),
+        linear-gradient(145deg, #07111f 0%, #0a1829 48%, #08101d 100%) !important;
+    color: var(--text-light) !important;
+}
+
+body::before {
+    background:
+        radial-gradient(circle at 22% 26%, rgba(45, 212, 191, 0.16), transparent 30%),
+        radial-gradient(circle at 76% 20%, rgba(56, 189, 248, 0.1), transparent 28%),
+        radial-gradient(circle at 54% 80%, rgba(212, 175, 55, 0.08), transparent 32%) !important;
+    filter: blur(68px) saturate(1.05) !important;
+    animation-duration: 34s !important;
+}
+
+body::after {
+    opacity: 0.24 !important;
+    background-size: 96px 96px !important;
+}
+
+h1 {
+    background: linear-gradient(120deg, #ffffff 0%, #dbeafe 42%, #8dded2 78%, #d4af37 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-weight: 800 !important;
+}
+
+#loginContainer,
+#menuContainer,
+.container,
+.form-panel,
+.stat-card,
+.menu-card,
+.action-bar,
+.table-container,
+#senhaModal > div {
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.038)) !important;
+    border-color: rgba(203, 213, 225, 0.18) !important;
+    box-shadow: var(--shadow-premium) !important;
+    backdrop-filter: blur(26px) saturate(1.18) !important;
+    -webkit-backdrop-filter: blur(26px) saturate(1.18) !important;
+}
+
+#loginContainer::before,
+.menu-card::before,
+.stat-card::before,
+.form-panel::before {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 40%, rgba(45, 212, 191, 0.08)) !important;
+    opacity: 0.5 !important;
+}
+
+.menu-card:hover,
+.stat-card:hover,
+.form-panel:hover,
+.upload-area:hover {
+    border-color: rgba(45, 212, 191, 0.44) !important;
+    box-shadow: 0 26px 70px rgba(2, 6, 23, 0.46), 0 0 0 1px rgba(45, 212, 191, 0.08) inset !important;
+}
+
+.menu-card:hover {
+    background:
+        radial-gradient(circle at 18% 0%, rgba(45, 212, 191, 0.12), transparent 44%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045)) !important;
+}
+
+.menu-icon,
+.upload-icon,
+.form-panel h3 i,
+.stat-icon {
+    color: #5eead4 !important;
+    filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.22)) !important;
+}
+
+.btn,
+.btn-primary,
+.app-wrapper .btn:not(.nav-item),
+#authBtn {
+    background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%) !important;
+    border-color: rgba(94, 234, 212, 0.22) !important;
+    box-shadow: 0 14px 28px rgba(15, 118, 110, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.btn:hover,
+.btn-primary:hover,
+.app-wrapper .btn:not(.nav-item):hover,
+#authBtn:hover {
+    box-shadow: 0 16px 34px rgba(15, 118, 110, 0.32), 0 0 0 4px rgba(45, 212, 191, 0.08) !important;
+    filter: brightness(1.06) saturate(1.08) !important;
+}
+
+.btn.secondary,
+.btn-outline,
+.app-wrapper .btn.secondary:not(.nav-item),
+.app-wrapper .btn-outline:not(.nav-item) {
+    background: rgba(15, 23, 42, 0.52) !important;
+    border-color: rgba(203, 213, 225, 0.18) !important;
+    color: #e2e8f0 !important;
+}
+
+.auth-input,
+.filter-input,
+.input-styled,
+.val-input,
+select.auth-input,
+textarea.auth-input,
+.ts-control {
+    background: rgba(3, 10, 21, 0.58) !important;
+    border-color: rgba(203, 213, 225, 0.18) !important;
+    color: #f8fafc !important;
+}
+
+.auth-input:focus,
+.filter-input:focus,
+.input-styled:focus,
+.val-input:focus,
+select.auth-input:focus,
+textarea.auth-input:focus,
+.ts-control.focus {
+    border-color: rgba(45, 212, 191, 0.68) !important;
+    box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.upload-area {
+    border-color: rgba(94, 234, 212, 0.34) !important;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.09), transparent 48%),
+        rgba(3, 10, 21, 0.34) !important;
+}
+
+th {
+    background: rgba(5, 12, 24, 0.88) !important;
+    color: #cbd5e1 !important;
+}
+
+tr:hover td {
+    background: rgba(45, 212, 191, 0.045) !important;
+}
+
+.val-badge {
+    background: rgba(45, 212, 191, 0.12) !important;
+    color: #99f6e4 !important;
+}
+
+.currency-badge {
+    background: rgba(212, 175, 55, 0.14) !important;
+    color: #f5d77a !important;
+}
+
+/* Sidebar workspace layout - sober banking interface */
+:root {
+    --bank-bg: #080f1a;
+    --bank-panel: rgba(12, 22, 36, 0.78);
+    --bank-panel-solid: #0c1624;
+    --bank-border: rgba(148, 163, 184, 0.18);
+    --bank-border-strong: rgba(148, 163, 184, 0.28);
+    --bank-text: #f8fafc;
+    --bank-muted: #94a3b8;
+    --bank-soft: #132235;
+    --bank-teal: #2dd4bf;
+    --bank-teal-dark: #0f766e;
+    --bank-gold: #c8a64a;
+    --bank-sidebar-width: 286px;
+    --bank-topbar-height: 68px;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(circle at 18% 12%, rgba(45, 212, 191, 0.1), transparent 30%),
+        radial-gradient(circle at 86% 6%, rgba(59, 130, 246, 0.08), transparent 28%),
+        linear-gradient(145deg, #080f1a 0%, #0b1624 52%, #08111d 100%) !important;
+}
+
+body.is-authenticated {
+    display: block !important;
+    align-items: initial !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+body.is-authenticated::before {
+    filter: blur(84px) saturate(0.9) !important;
+    opacity: 0.72 !important;
+}
+
+.app-sidebar {
+    display: none;
+}
+
+body.is-authenticated .app-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1200;
+    display: flex;
+    width: var(--bank-sidebar-width);
+    height: 100vh;
+    padding: 18px 14px;
+    flex-direction: column;
+    background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(8, 15, 26, 0.9)) !important;
+    border-right: 1px solid var(--bank-border);
+    box-shadow: 18px 0 50px rgba(2, 6, 23, 0.34);
+    backdrop-filter: blur(22px) saturate(1.1);
+    -webkit-backdrop-filter: blur(22px) saturate(1.1);
+}
+
+body.is-authenticated #loginContainer {
+    display: none !important;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 18px;
+    border-bottom: 1px solid var(--bank-border);
+}
+
+.brand-mark {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.22), rgba(200, 166, 74, 0.12));
+    border: 1px solid rgba(45, 212, 191, 0.24);
+    color: var(--bank-text);
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.sidebar-brand strong {
+    display: block;
+    color: var(--bank-text);
+    font-size: 1rem;
+    line-height: 1.1;
+}
+
+.sidebar-brand small {
+    display: block;
+    margin-top: 3px;
+    color: var(--bank-muted);
+    font-size: 0.76rem;
+}
+
+.sidebar-nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 14px 2px 6px;
+    scrollbar-gutter: stable;
+}
+
+.side-section {
+    margin: 18px 10px 8px;
+    color: rgba(148, 163, 184, 0.72);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.side-link {
+    width: 100%;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 3px 0;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: #cbd5e1;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 650;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.side-link i {
+    width: 19px;
+    color: #8ab6c3;
+    text-align: center;
+    font-size: 0.96rem;
+}
+
+.side-link:hover {
+    background: rgba(148, 163, 184, 0.08);
+    border-color: rgba(148, 163, 184, 0.13);
+    color: #ffffff;
+}
+
+.side-link.active {
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.16), rgba(15, 118, 110, 0.18));
+    border-color: rgba(45, 212, 191, 0.28);
+    color: #ffffff;
+    box-shadow: inset 3px 0 0 var(--bank-teal);
+}
+
+.side-link.active i {
+    color: var(--bank-teal);
+}
+
+body.is-authenticated .user-nav {
+    position: fixed;
+    top: 0;
+    left: var(--bank-sidebar-width);
+    right: 0;
+    z-index: 1100;
+    width: auto !important;
+    max-width: none !important;
+    height: var(--bank-topbar-height);
+    margin: 0 !important;
+    padding: 0 28px;
+    display: flex !important;
+    background: rgba(8, 15, 26, 0.74);
+    border-bottom: 1px solid var(--bank-border);
+    backdrop-filter: blur(18px) saturate(1.1);
+    -webkit-backdrop-filter: blur(18px) saturate(1.1);
+}
+
+body.is-authenticated .back-icon-btn {
+    display: none !important;
+}
+
+body.is-authenticated .user-nav-text {
+    color: #cbd5e1 !important;
+    font-size: 0.88rem;
+}
+
+body.is-authenticated .logout-btn {
+    border-radius: 10px !important;
+    background: rgba(15, 23, 42, 0.74) !important;
+    border-color: var(--bank-border-strong) !important;
+    color: #e2e8f0 !important;
+}
+
+body.is-authenticated #menuContainer,
+body.is-authenticated .module-container {
+    position: fixed;
+    top: var(--bank-topbar-height);
+    left: var(--bank-sidebar-width);
+    right: 0;
+    bottom: 0;
+    width: auto !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 28px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    text-align: left !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.is-authenticated #menuContainer {
+    display: block;
+}
+
+body.is-authenticated #menuContainer h1 {
+    margin: 0 0 10px !important;
+    text-align: left !important;
+    font-size: 1.75rem !important;
+}
+
+body.is-authenticated #menuContainer h1::after {
+    content: "Workspace financeiro com navegação por módulos na barra lateral.";
+    display: block;
+    margin-top: 8px;
+    color: var(--bank-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    -webkit-text-fill-color: var(--bank-muted);
+}
+
+body.is-authenticated #menuContainer .menu-grid {
+    display: none !important;
+}
+
+body.is-authenticated #menuContainer::after {
+    content: "Selecione um módulo na barra lateral para iniciar.";
+    display: block;
+    max-width: 760px;
+    margin-top: 22px;
+    padding: 24px;
+    border: 1px solid var(--bank-border);
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.032));
+    color: #cbd5e1;
+    box-shadow: var(--shadow-premium);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+}
+
+body.is-authenticated .module-container > h1:first-child,
+body.is-authenticated .module-container h1 {
+    margin: 0 0 24px !important;
+    text-align: left !important;
+    font-size: 1.55rem !important;
+}
+
+body.is-authenticated .form-panel,
+body.is-authenticated .stat-card,
+body.is-authenticated .menu-card,
+body.is-authenticated .action-bar,
+body.is-authenticated .table-container,
+body.is-authenticated .upload-area {
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.42)) !important;
+    border-color: var(--bank-border) !important;
+    box-shadow: 0 18px 42px rgba(2, 6, 23, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+body.is-authenticated .form-panel:hover,
+body.is-authenticated .stat-card:hover,
+body.is-authenticated .menu-card:hover {
+    transform: none !important;
+    border-color: rgba(45, 212, 191, 0.32) !important;
+}
+
+body.is-authenticated .table-container,
+body.is-authenticated .table-full {
+    max-height: none !important;
+    overflow: auto !important;
+}
+
+body.is-authenticated th {
+    background: rgba(8, 15, 26, 0.96) !important;
+}
+
+body.is-authenticated .btn,
+body.is-authenticated .btn-primary,
+body.is-authenticated .app-wrapper .btn:not(.nav-item) {
+    background: linear-gradient(135deg, #0f766e, #115e59) !important;
+    box-shadow: 0 10px 22px rgba(15, 118, 110, 0.18) !important;
+}
+
+body.is-authenticated .btn.secondary,
+body.is-authenticated .btn-outline {
+    background: rgba(15, 23, 42, 0.78) !important;
+    border-color: var(--bank-border) !important;
+}
+
+body.is-authenticated .auth-input,
+body.is-authenticated .filter-input,
+body.is-authenticated .input-styled,
+body.is-authenticated .val-input,
+body.is-authenticated select.auth-input,
+body.is-authenticated textarea.auth-input,
+body.is-authenticated .ts-control {
+    background: rgba(3, 10, 21, 0.66) !important;
+}
+
+@media (max-width: 920px) {
+    :root {
+        --bank-sidebar-width: 78px;
+    }
+
+    body.is-authenticated .app-sidebar {
+        padding: 14px 9px;
+    }
+
+    .sidebar-brand {
+        justify-content: center;
+        padding: 0 0 14px;
+    }
+
+    .sidebar-brand div,
+    .side-section,
+    .side-link span {
+        display: none;
+    }
+
+    .side-link {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .side-link i {
+        width: auto;
+    }
+
+    body.is-authenticated #menuContainer,
+    body.is-authenticated .module-container {
+        padding: 18px !important;
+    }
+}
+
+/* Despesas Mensais toolbar polish */
+body.is-authenticated #despesasMensaisModule > .action-bar {
+    grid-template-columns: minmax(500px, auto) minmax(620px, 1fr) !important;
+    align-items: end !important;
+    gap: 1rem !important;
+}
+
+body.is-authenticated #despesasMensaisModule > .action-bar .action-bar-left {
+    grid-template-columns: 260px 210px !important;
+    align-items: end !important;
+    gap: 0.85rem !important;
+}
+
+body.is-authenticated #despesasMensaisModule #dmMesRef {
+    width: 260px !important;
+    min-width: 260px !important;
+    height: 42px !important;
+    font-size: 0.98rem !important;
+}
+
+body.is-authenticated #despesasMensaisModule > .action-bar .action-bar-left .btn {
+    width: 210px !important;
+    min-width: 210px !important;
+    max-width: 210px !important;
+    height: 42px !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+}
+
+body.is-authenticated #despesasMensaisModule > .action-bar .action-bar-left > div {
+    margin-top: 0 !important;
+}
+
+body.is-authenticated #despesasMensaisModule #dmBotoesArea {
+    align-items: end !important;
+}
+
+body.is-authenticated #despesasMensaisModule #dmBotoesArea .btn {
+    height: 42px !important;
+}
+
+@media (max-width: 1180px) {
+    body.is-authenticated #despesasMensaisModule > .action-bar {
+        grid-template-columns: 1fr !important;
+    }
+
+    body.is-authenticated #despesasMensaisModule > .action-bar .action-bar-left {
+        grid-template-columns: minmax(220px, 260px) minmax(190px, 210px) !important;
+    }
+}
+
+/* Hard override for Despesas Mensais period controls */
+#despesasMensaisModule > .action-bar {
+    display: grid !important;
+    grid-template-columns: minmax(610px, 650px) minmax(720px, 1fr) !important;
+    align-items: end !important;
+}
+
+#despesasMensaisModule .dm-period-actions {
+    display: grid !important;
+    grid-template-columns: 360px 230px !important;
+    align-items: end !important;
+    gap: 14px !important;
+}
+
+#despesasMensaisModule .dm-period-field,
+#despesasMensaisModule .dm-manual-action {
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+#despesasMensaisModule #dmMesRef {
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+    height: 44px !important;
+    padding: 0 16px !important;
+    font-size: 1rem !important;
+}
+
+#despesasMensaisModule #dmManualLineBtn {
+    width: 230px !important;
+    min-width: 230px !important;
+    max-width: 230px !important;
+    height: 44px !important;
+    padding: 0 16px !important;
+    margin: 0 !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+}
+
+#despesasMensaisModule #dmBotoesArea {
+    align-items: end !important;
+}
+
+@media (max-width: 1280px) {
+    #despesasMensaisModule > .action-bar {
+        grid-template-columns: 1fr !important;
+    }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyFinance</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tom Select para categorias pesquisáveis -->
@@ -707,8 +707,95 @@
         }
 
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=dm-toolbar-2">
 </head>
 <body>
+
+    <aside class="app-sidebar" id="appSidebar" aria-label="Navegação principal">
+        <div class="sidebar-brand">
+            <span class="brand-mark">MF</span>
+            <div>
+                <strong>MyFinance</strong>
+                <small>Banking workspace</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="side-link active" data-module="home" onclick="returnToMenu()">
+                <i class="fa-solid fa-table-cells-large"></i><span>Visão Geral</span>
+            </button>
+
+            <div class="side-section">Operação</div>
+            <button class="side-link" data-module="extratos" onclick="openModule('extratos')">
+                <i class="fa-solid fa-file-invoice-dollar"></i><span>Upload de Extratos</span>
+            </button>
+            <button class="side-link" data-module="despesas_mensais" onclick="openModule('despesas_mensais')">
+                <i class="fa-solid fa-wallet"></i><span>Despesas Mensais</span>
+            </button>
+            <button class="side-link" data-module="receitas_mensais" onclick="openModule('receitas_mensais')">
+                <i class="fa-solid fa-coins"></i><span>Receitas Mensais</span>
+            </button>
+
+            <div class="side-section">Controle</div>
+            <button class="side-link" data-module="impostos" onclick="openModule('impostos')">
+                <i class="fa-solid fa-building-columns"></i><span>Impostos</span>
+            </button>
+            <button class="side-link" data-module="emprestimos" onclick="openModule('emprestimos')">
+                <i class="fa-solid fa-money-bill-transfer"></i><span>Empréstimos</span>
+            </button>
+
+            <div class="side-section">Patrimônio</div>
+            <button class="side-link" data-module="investimentos" onclick="openModule('investimentos')">
+                <i class="fa-solid fa-chart-line"></i><span>Investimentos</span>
+            </button>
+            <button class="side-link" data-module="lcto_investimentos" onclick="openModule('lcto_investimentos')">
+                <i class="fa-solid fa-coins"></i><span>Lançamentos Invest.</span>
+            </button>
+            <button class="side-link" data-module="trader" onclick="openModule('trader')">
+                <i class="fa-solid fa-arrow-trend-up"></i><span>Trader</span>
+            </button>
+
+            <div class="side-section">Relatórios</div>
+            <button class="side-link" data-module="dashboard" onclick="openModule('dashboard')">
+                <i class="fa-solid fa-chart-pie"></i><span>Dashboard</span>
+            </button>
+            <button class="side-link" data-module="relatorio_mes" onclick="openModule('relatorio_mes')">
+                <i class="fa-solid fa-calendar-days"></i><span>Relatório Mensal</span>
+            </button>
+            <button class="side-link" data-module="relatorio_ano" onclick="openModule('relatorio_ano')">
+                <i class="fa-solid fa-calendar-check"></i><span>Relatório Anual</span>
+            </button>
+            <button class="side-link" data-module="relatorio_dinamico" onclick="openModule('relatorio_dinamico')">
+                <i class="fa-solid fa-table-columns"></i><span>Relatório Dinâmico</span>
+            </button>
+
+            <div class="side-section">Configurações</div>
+            <button class="side-link" data-module="acessos" onclick="openModule('acessos')">
+                <i class="fa-solid fa-users-gear"></i><span>Acessos</span>
+            </button>
+            <button class="side-link" data-module="cad_despesas" onclick="openModule('cad_despesas')">
+                <i class="fa-solid fa-list-check"></i><span>Despesas</span>
+            </button>
+            <button class="side-link" data-module="cad_contas" onclick="openModule('cad_contas')">
+                <i class="fa-solid fa-building-columns"></i><span>Contas Bancárias</span>
+            </button>
+            <button class="side-link" data-module="cad_receitas" onclick="openModule('cad_receitas')">
+                <i class="fa-solid fa-file-invoice-dollar"></i><span>Receitas</span>
+            </button>
+            <button class="side-link" data-module="cad_investimentos" onclick="openModule('cad_investimentos')">
+                <i class="fa-solid fa-chart-line"></i><span>Investimentos</span>
+            </button>
+            <button class="side-link" data-module="cad_usuarios" onclick="openModule('cad_usuarios')">
+                <i class="fa-solid fa-users"></i><span>Usuários</span>
+            </button>
+            <button class="side-link" data-module="cad_tipo_imposto" onclick="openModule('cad_tipo_imposto')">
+                <i class="fa-solid fa-percent"></i><span>Tipos de Impostos</span>
+            </button>
+            <button class="side-link" data-module="avancado" onclick="openModule('avancado')">
+                <i class="fa-solid fa-sliders"></i><span>Avançado</span>
+            </button>
+        </nav>
+    </aside>
 
     <div class="user-nav" id="userNav" style="display: none;">
         <button class="back-icon-btn" id="backMenuBtn" onclick="returnToMenu()" style="display: none;" title="Voltar ao Início">
@@ -1375,13 +1462,13 @@
 
         <!-- Barra de Filtro por Mês + Botões -->
         <div class="action-bar">
-            <div class="action-bar-left">
-                <div>
+            <div class="action-bar-left dm-period-actions">
+                <div class="dm-period-field">
                     <label style="font-size:0.85rem;color:var(--text-muted);display:block;margin-bottom:4px;">Selecione o Período</label>
-                    <input type="month" id="dmMesRef" class="auth-input" style="width:200px;" onchange="loadDespesasMensais()">
+                    <input type="month" id="dmMesRef" class="auth-input" onchange="loadDespesasMensais()">
                 </div>
-                <div style="margin-top:20px;">
-                    <button class="btn btn-xs secondary" onclick="openDmForm(null)"><i class="fa-solid fa-plus"></i> Nova Linha Manual</button>
+                <div class="dm-manual-action">
+                    <button class="btn btn-xs secondary" id="dmManualLineBtn" onclick="openDmForm(null)"><i class="fa-solid fa-plus"></i> Nova Linha Manual</button>
                 </div>
             </div>
             <div id="dmBotoesArea" class="action-bar-right">
@@ -2852,6 +2939,7 @@
                     const data = await res.json();
                     if(data.logged_in) {
                         document.getElementById('userNameLabel').innerText = `Bem-vindo(a), ${data.email}`;
+                        applyAuthenticatedLayout();
                         returnToMenu(); // Mostra o menu inicial
                     } else {
                         showLoginUI();
@@ -2865,11 +2953,14 @@
         }
 
         function openModule(moduleKey) {
+            applyAuthenticatedLayout();
             document.getElementById('menuContainer').style.display = 'none';
             document.querySelectorAll('.module-container').forEach(el => el.style.display = 'none');
-            document.getElementById('backMenuBtn').style.display = 'flex';
+            document.getElementById('backMenuBtn').style.display = 'none';
             let nav = document.getElementById('userNav');
+            nav.style.display = 'flex';
             nav.style.maxWidth = '1550px';
+            setActiveModule(moduleKey);
 
             const moduleMap = {
                 'extratos':          () => document.getElementById('extratosModule').style.display = 'block',
@@ -3044,7 +3135,7 @@
             tbody.innerHTML = '';
             window.contasTableData.forEach(c => {
                 const temSenha = !!(c.senha);
-                tbody.innerHTML += `<tr>\n                    <td style="text-align:center;"><input type="checkbox" class="dm-row-cb" value="${d.id}"></td>
+                tbody.innerHTML += `<tr>
                     <td>${c.descricao||''}</td>
                     <td>${c.agencia||'—'}</td>
                     <td>${c.conta||'—'}</td>
@@ -3183,9 +3274,13 @@
         function renderReceitasTable() {
             const tbody = document.getElementById('receitasTableBody');
             tbody.innerHTML = '';
+            if (!window.receitasTableData || !window.receitasTableData.length) {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--text-muted);">Nenhuma receita cadastrada.</td></tr>';
+                return;
+            }
             window.receitasTableData.forEach(r => {
-                tbody.innerHTML += `<tr>\n                    <td style="text-align:center;"><input type="checkbox" class="dm-row-cb" value="${d.id}"></td>
-                    <td>${r.descricao}</td>
+                tbody.innerHTML += `<tr>
+                    <td>${r.descricao || ''}</td>
                     <td style="text-align:center;">
                         <button class="btn secondary" style="padding:0.3rem 0.6rem;font-size:0.8rem;margin-right:4px;"
                             onclick="editReceita(${r.id},'${esc(r.descricao)}')" title="Editar">
@@ -3272,8 +3367,12 @@
         function renderInvestimentosTable() {
             const tbody=document.getElementById('investimentosTableBody');
             tbody.innerHTML = '';
+            if (!window.investimentosTableData || !window.investimentosTableData.length) {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--text-muted);">Nenhum investimento cadastrado.</td></tr>';
+                return;
+            }
             window.investimentosTableData.forEach(i => {
-                tbody.innerHTML += `<tr>\n                    <td style="text-align:center;"><input type="checkbox" class="dm-row-cb" value="${d.id}"></td>
+                tbody.innerHTML += `<tr>
                     <td>${i.descricao}</td>
                     <td style="text-align:center;">
                         <button class="btn secondary" style="padding:0.3rem 0.6rem;font-size:0.8rem;margin-right:4px;"
@@ -3466,14 +3565,15 @@
             
             const colKeys = {
                 'despesasTable': ['id', 'despesa', 'tipo_despesa', 'fator_divisao', 'prioridade'],
-                'contasTable': ['id', 'descricao', 'agencia', 'conta', 'dados_acesso', 'senha', 'comentarios'],
-                'receitasTable': ['id', 'descricao', 'tipo_receita', 'fator_divisao', 'prioridade'],
-                'usuariosTable': ['id', 'nome', 'email', 'chave_usr1', 'chave_usr2'],
-                'investimentosTable': ['id', 'descricao', 'tipo', 'valor', 'data_inv', 'conta_bancaria']
+                'contasTable': ['descricao', 'agencia', 'conta', 'dados_acesso', 'senha', 'comentarios'],
+                'receitasTable': ['descricao', 'tipo_receita', 'fator_divisao', 'prioridade'],
+                'usuariosTable': ['nome', 'chave_usr1', 'chave_usr2', 'fator_pagamento'],
+                'investimentosTable': ['descricao'],
+                'tipoImpostoTable': ['tp_imposto', 'alq_imposto', 'pagamento']
             };
-            const keys = colKeys[tableId] || Object.keys(a);
+            const keys = colKeys[tableId] || Object.keys(window[key][0] || {});
             window[key].sort((a, b) => {
-                const keyName = keys[dataColIndex];
+                const keyName = keys[colIndex];
                 let valA = a[keyName];
                 let valB = b[keyName];
                 
@@ -3618,8 +3718,12 @@
         function renderUsuariosTable() {
             const tbody = document.getElementById('usuariosTableBody');
             tbody.innerHTML = '';
+            if (!window.usuariosTableData || !window.usuariosTableData.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Nenhum usuário cadastrado.</td></tr>';
+                return;
+            }
             window.usuariosTableData.forEach(u => {
-                tbody.innerHTML += `<tr>\n                    <td style="text-align:center;"><input type="checkbox" class="dm-row-cb" value="${d.id}"></td>
+                tbody.innerHTML += `<tr>
                     <td>${u.nome}</td>
                     <td>${u.chave_usr1||'—'}</td>
                     <td>${u.chave_usr2||'—'}</td>
@@ -3709,6 +3813,7 @@
         }
 
         function returnToMenu() {
+            applyAuthenticatedLayout();
             document.getElementById('loginContainer').style.display = 'none';
             document.querySelectorAll('.module-container').forEach(el => el.style.display = 'none');
             document.getElementById('menuContainer').style.display = 'block';
@@ -3717,6 +3822,7 @@
             nav.style.display = 'flex';
             nav.style.maxWidth = '1200px'; 
             document.getElementById('backMenuBtn').style.display = 'none';
+            setActiveModule('home');
 
             // Reset layout limits
             document.getElementById('extratosModule').classList.remove('no-limits');
@@ -3727,10 +3833,23 @@
         }
 
         function showLoginUI() {
+            document.body.classList.remove('is-authenticated');
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('menuContainer').style.display = 'none';
             document.querySelectorAll('.module-container').forEach(el => el.style.display = 'none');
             document.getElementById('userNav').style.display = 'none';
+        }
+
+        function setActiveModule(moduleKey) {
+            document.querySelectorAll('.side-link').forEach(link => {
+                link.classList.toggle('active', link.dataset.module === moduleKey);
+            });
+        }
+
+        function applyAuthenticatedLayout() {
+            document.body.classList.add('is-authenticated');
+            const sidebar = document.getElementById('appSidebar');
+            if (sidebar) sidebar.style.display = 'flex';
         }
 
         async function logOut() {
@@ -5831,7 +5950,11 @@
                     body: JSON.stringify(rows)
                 });
                 if(res.ok) {
-                    status.innerText = 'Dados salvos com sucesso em Despesas Mensais!';
+                    const result = await res.json();
+                    const skipped = Number(result.skipped_duplicates || 0);
+                    status.innerText = skipped > 0
+                        ? `Dados salvos com sucesso em Despesas Mensais. ${skipped} registro(s) duplicado(s) foram ignorados.`
+                        : 'Dados salvos com sucesso em Despesas Mensais!';
                     status.style.color = 'var(--success)';
                 } else {
                     const err = await res.json();

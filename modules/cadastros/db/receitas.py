@@ -6,43 +6,51 @@ def init_tables():
     conn.execute('''
         CREATE TABLE IF NOT EXISTS cad_receitas (
             id SERIAL PRIMARY KEY,
+            user_email TEXT NOT NULL,
             descricao TEXT NOT NULL
         )
     ''')
     conn.commit()
+    try:
+        conn.execute('SELECT user_email FROM cad_receitas LIMIT 1')
+    except Exception:
+        conn.execute('ALTER TABLE cad_receitas ADD COLUMN user_email TEXT')
+        conn.commit()
     conn.close()
 
 
-def get_all_receitas():
+def get_all_receitas(user_email):
     conn = get_connection()
-    rows = conn.execute('SELECT * FROM cad_receitas ORDER BY id DESC').fetchall()
+    rows = conn.execute(
+        'SELECT * FROM cad_receitas WHERE user_email=%s ORDER BY id DESC', (user_email,)
+    ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
 
 
-def add_receita(descricao):
+def add_receita(user_email, descricao):
     conn = get_connection()
-    conn.execute('INSERT INTO cad_receitas (descricao) VALUES (%s)', (descricao,))
+    conn.execute('INSERT INTO cad_receitas (user_email, descricao) VALUES (%s,%s)', (user_email, descricao))
     conn.commit()
     conn.close()
 
 
-def update_receita(r_id, descricao):
+def update_receita(user_email, r_id, descricao):
     conn = get_connection()
-    conn.execute('UPDATE cad_receitas SET descricao=%s WHERE id=%s', (descricao, r_id))
+    conn.execute('UPDATE cad_receitas SET descricao=%s WHERE id=%s AND user_email=%s', (descricao, r_id, user_email))
     conn.commit()
     conn.close()
 
 
-def delete_receita(r_id):
+def delete_receita(user_email, r_id):
     conn = get_connection()
-    conn.execute('DELETE FROM cad_receitas WHERE id=%s', (r_id,))
+    conn.execute('DELETE FROM cad_receitas WHERE id=%s AND user_email=%s', (r_id, user_email))
     conn.commit()
     conn.close()
 
 
-def clear_receitas():
+def clear_receitas(user_email):
     conn = get_connection()
-    conn.execute('DELETE FROM cad_receitas')
+    conn.execute('DELETE FROM cad_receitas WHERE user_email=%s', (user_email,))
     conn.commit()
     conn.close()

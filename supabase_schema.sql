@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS lcto_impostos (
     valor_faturado REAL,
     valor_imposto REAL,
     moeda_pagamento TEXT,
-    pagamento REAL,
+    pagamento TEXT,
     desconto_iva REAL,
     criado_em TEXT DEFAULT to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS'),
     pagamento_mes_ano TEXT

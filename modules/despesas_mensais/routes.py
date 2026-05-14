@@ -27,8 +27,8 @@ def api_save_batch_despesas_mensais():
     if 'user_email' not in session:
         return jsonify({'error': 'Não logado'}), 401
     rows = request.json or []
-    count = save_despesas_mensais_batch(session['user_email'], rows)
-    return jsonify({'status': 'ok', 'saved': count})
+    result = save_despesas_mensais_batch(session['user_email'], rows)
+    return jsonify({'status': 'ok', **result})
 
 
 @bp.route('/api/despesas_mensais', methods=['POST'])

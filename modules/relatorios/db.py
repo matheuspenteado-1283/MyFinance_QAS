@@ -50,9 +50,9 @@ def get_all_relatorios_dinamicos(user_email):
     return result
 
 
-def delete_relatorio_dinamico(r_id):
+def delete_relatorio_dinamico(user_email, r_id):
     conn = get_connection()
-    conn.execute('DELETE FROM relatorios_configurados WHERE id=%s', (r_id,))
+    conn.execute('DELETE FROM relatorios_configurados WHERE id=%s AND user_email=%s', (r_id, user_email))
     conn.commit()
     conn.close()
 

@@ -76,8 +76,8 @@ def delete_lcto_investimento(li_id):
     conn.close()
 
 
-def clear_lcto_investimentos():
+def clear_lcto_investimentos(user_email):
     conn = get_connection()
-    conn.execute('DELETE FROM lcto_investimentos')
+    conn.execute('DELETE FROM lcto_investimentos WHERE user_email=%s', (user_email,))
     conn.commit()
     conn.close()

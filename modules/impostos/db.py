@@ -54,23 +54,23 @@ def add_lcto_imposto(user_email, mes_ano, tp_imposto, moeda_faturado, valor_fatu
     conn.close()
 
 
-def update_lcto_imposto(li_id, mes_ano, tp_imposto, moeda_faturado, valor_faturado,
+def update_lcto_imposto(user_email, li_id, mes_ano, tp_imposto, moeda_faturado, valor_faturado,
                         valor_imposto, moeda_pagamento, pagamento, pagamento_mes_ano, desconto_iva):
     conn = get_connection()
     conn.execute('''
         UPDATE lcto_impostos SET
         mes_ano=%s, tp_imposto=%s, moeda_faturado=%s, valor_faturado=%s, valor_imposto=%s,
         moeda_pagamento=%s, pagamento=%s, pagamento_mes_ano=%s, desconto_iva=%s
-        WHERE id=%s
+        WHERE id=%s AND user_email=%s
     ''', (mes_ano, tp_imposto, moeda_faturado, valor_faturado, valor_imposto,
-          moeda_pagamento, pagamento, pagamento_mes_ano, desconto_iva, li_id))
+          moeda_pagamento, pagamento, pagamento_mes_ano, desconto_iva, li_id, user_email))
     conn.commit()
     conn.close()
 
 
-def delete_lcto_imposto(li_id):
+def delete_lcto_imposto(user_email, li_id):
     conn = get_connection()
-    conn.execute('DELETE FROM lcto_impostos WHERE id=%s', (li_id,))
+    conn.execute('DELETE FROM lcto_impostos WHERE id=%s AND user_email=%s', (li_id, user_email))
     conn.commit()
     conn.close()
 

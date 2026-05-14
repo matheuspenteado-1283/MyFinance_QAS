@@ -64,7 +64,7 @@ def api_upload_lcto_investimentos():
     try:
         filename = file.filename.lower()
         df = pd.read_excel(filepath) if filename.endswith(('.xls', '.xlsx')) else pd.read_csv(filepath)
-        clear_lcto_investimentos()
+        clear_lcto_investimentos(session['user_email'])
         for _, row in df.iterrows():
             add_lcto_investimento(
                 session['user_email'],

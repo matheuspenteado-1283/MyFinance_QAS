@@ -45,7 +45,7 @@ def api_create_relatorio_dinamico():
 def api_delete_relatorio_dinamico(r_id):
     if 'user_email' not in session:
         return jsonify({'error': 'Não logado'}), 401
-    delete_relatorio_dinamico(r_id)
+    delete_relatorio_dinamico(session['user_email'], r_id)
     return jsonify({'status': 'ok'})
 
 

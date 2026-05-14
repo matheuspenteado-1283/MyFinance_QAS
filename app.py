@@ -21,6 +21,28 @@ def create_app():
     configure_app(app)
     init_all()
 
+    # Endpoint de diagnóstico — remover após validar deploy
+    from flask import jsonify
+    import traceback
+
+    @app.route('/debug/db')
+    def debug_db():
+        try:
+            from db.connection import get_connection
+            import os
+            conn = get_connection()
+            cur = conn.cursor()
+            cur.execute('SELECT COUNT(*) as n FROM users')
+            row = cur.fetchone()
+            conn.close()
+            return jsonify({
+                "status": "ok",
+                "users": dict(row)['n'],
+                "host": os.getenv("DB_HOST", "not set"),
+            })
+        except Exception as e:
+            return jsonify({"error": str(e), "trace": traceback.format_exc()}), 500
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(extratos_bp)
     app.register_blueprint(cadastros_bp)

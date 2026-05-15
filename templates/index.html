@@ -2946,7 +2946,21 @@
             'avancado': 'Avançado',
         };
 
+        function showGoodbyeMessage() {
+            document.getElementById('authSubtitle').textContent = 'Obrigado — Aguardamos sua volta!';
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('toggleAuthMode').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('authSubtitle').textContent = 'Faça login para acessar o sistema.';
+                document.getElementById('authForm').style.display = 'flex';
+                document.getElementById('toggleAuthMode').style.display = 'block';
+            }, 3000);
+        }
+
         async function checkAuthStatus() {
+            const justLoggedOut = sessionStorage.getItem('just_logged_out') === '1';
+            if (justLoggedOut) sessionStorage.removeItem('just_logged_out');
+
             try {
                 const res = await fetch('/api/me');
                 if(res.ok) {
@@ -2957,23 +2971,15 @@
                         returnToMenu(); // Mostra o menu inicial
                     } else {
                         showLoginUI();
-                        if (sessionStorage.getItem('just_logged_out')) {
-                            sessionStorage.removeItem('just_logged_out');
-                            document.getElementById('authSubtitle').textContent = 'Obrigado — Aguardamos sua volta!';
-                            document.getElementById('authForm').style.display = 'none';
-                            document.getElementById('toggleAuthMode').style.display = 'none';
-                            setTimeout(() => {
-                                document.getElementById('authSubtitle').textContent = 'Faça login para acessar o sistema.';
-                                document.getElementById('authForm').style.display = 'flex';
-                                document.getElementById('toggleAuthMode').style.display = 'block';
-                            }, 3000);
-                        }
+                        if (justLoggedOut) showGoodbyeMessage();
                     }
                 } else {
                     showLoginUI();
+                    if (justLoggedOut) showGoodbyeMessage();
                 }
             } catch(e) {
                 showLoginUI();
+                if (justLoggedOut) showGoodbyeMessage();
             }
         }
 

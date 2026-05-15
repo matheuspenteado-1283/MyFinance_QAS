@@ -3867,10 +3867,20 @@
         }
 
         async function logOut() {
-            await fetch('/logout', { method: 'POST' });
+            try { await fetch('/logout', { method: 'POST' }); } catch(e) { /* prosseguir mesmo com erro de rede */ }
             parsedTransactions = [];
-            document.getElementById('tableBody').innerHTML = '';
+            const tb = document.getElementById('tableBody');
+            if (tb) tb.innerHTML = '';
+            // Exibe mensagem de despedida antes de mostrar o formulário de login
+            document.getElementById('authSubtitle').textContent = 'Obrigado — Aguardamos sua volta!';
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('toggleAuthMode').style.display = 'none';
             showLoginUI();
+            setTimeout(() => {
+                document.getElementById('authSubtitle').textContent = 'Faça login para acessar o sistema.';
+                document.getElementById('authForm').style.display = 'flex';
+                document.getElementById('toggleAuthMode').style.display = 'block';
+            }, 3000);
         }
 
         // ── Módulo Impostos ─────────────────────────────────────────────

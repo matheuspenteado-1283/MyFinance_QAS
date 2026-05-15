@@ -186,12 +186,18 @@ def _read_xml_xls(filepath):
     try:
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             content = f.read()
-        if '<?xml' in content and '<Workbook' in content:
+        if '<?xml' in content and ('Workbook' in content or 'worksheet' in content.lower()):
             soup = BeautifulSoup(content, 'xml')
             data = []
             for row in soup.find_all('Row'):
                 row_data = []
                 for cell in row.find_all('Cell'):
+                    # Handle sparse cells with ss:Index (Excel XML Spreadsheet format)
+                    idx_attr = cell.get('ss:Index') or cell.get('Index')
+                    if idx_attr:
+                        target = int(idx_attr) - 1  # 1-based → 0-based
+                        while len(row_data) < target:
+                            row_data.append('')
                     data_tag = cell.find('Data')
                     row_data.append(data_tag.text if data_tag else '')
                 if any(row_data):
@@ -216,16 +222,21 @@ def process_file(filepath):
     elif filepath.lower().endswith(('.xls', '.xlsx', '.xml')):
         df = _read_xml_xls(filepath)
         if df is not None:
-            return _df_to_transactions(df, filepath=filepath)
+            txns = _df_to_transactions(df, filepath=filepath)
+            if txns:
+                return txns
         try:
             df = pd.read_excel(filepath)
+            txns = _df_to_transactions(df, filepath=filepath)
+            if txns:
+                return txns
+        except Exception:
+            pass
+        try:
+            df = pd.read_excel(filepath, engine='xlrd')
             return _df_to_transactions(df, filepath=filepath)
         except Exception:
-            try:
-                df = pd.read_excel(filepath, engine='xlrd')
-                return _df_to_transactions(df, filepath=filepath)
-            except Exception:
-                return []
+            return []
 
     elif filepath.lower().endswith('.pdf'):
         transactions = []

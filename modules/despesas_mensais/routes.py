@@ -119,8 +119,13 @@ def api_upload_despesas_mensais():
 
         force_moeda = (request.form or {}).get('moeda') or (request.json or {}).get('moeda') if request.form or request.json else None
 
-        is_revolut = any(c in df.columns for c in ['descrição', 'descricao', 'description']) or any(c in df.columns for c in ['tipo', 'type'])
-        has_moeda_col = 'moeda' in df.columns
+        # Revolut detection: requires Revolut-specific columns (amount or date columns)
+        # System exports have 'descrição' too, so we must NOT use it as sole indicator
+        is_revolut = (
+            any(c in df.columns for c in ['montante', 'amount']) or
+            any(c in df.columns for c in ['data de início', 'data de conclusão', 'data de inicio', 'data de conclusao', 'started date', 'completed date'])
+        )
+        has_moeda_col = 'moeda' in df.columns or 'moeda original' in df.columns
 
         if not has_moeda_col and not force_moeda:
             if is_revolut:
@@ -140,18 +145,19 @@ def api_upload_despesas_mensais():
                     cambio = 1
                     val_eur = val_orig
                 else:
-                    data = row.get('data') or row.get('Data') or ''
-                    desc = row.get('descricao') or row.get('descrição') or row.get('descricao') or ''
+                    data_raw = row.get('data') or row.get('Data') or ''
+                    data = str(data_raw)[:10] if data_raw and str(data_raw).lower() not in ['nan', 'none', 'nat'] else ''
+                    desc = row.get('descricao') or row.get('descrição') or row.get('description') or ''
                     val_orig = float(row.get('valor_original') or row.get('valor original') or row.get('valor') or 0) or 0
 
                     if force_moeda:
                         moeda = force_moeda.upper()
                     else:
-                        moeda_raw = row.get('moeda') or row.get('Moeda')
+                        moeda_raw = row.get('moeda') or row.get('moeda original') or row.get('moeda_original')
                         if moeda_raw and str(moeda_raw).strip():
                             moeda = 'EUR' if str(moeda_raw).upper().strip() == 'EUR' else 'BRL'
-                    cambio = float(row.get('cambio_eur') or row.get('cambio eur') or row.get('câmbio') or 1) or 1
-                    val_eur = float(row.get('valor_eur') or row.get('valor eur') or val_orig * cambio) or (val_orig * cambio)
+                    cambio = float(row.get('cambio_eur') or row.get('câmbio eur') or row.get('cambio eur') or row.get('câmbio') or 1) or 1
+                    val_eur = float(row.get('valor_eur') or row.get('valor final (eur)') or row.get('valor eur') or 0) or (val_orig * cambio)
 
                 if desc.lower() in ['nan', 'none', ''] or not desc:
                     continue
@@ -165,11 +171,11 @@ def api_upload_despesas_mensais():
                 desc = desc[:200]
                 usr1 = str(row.get('usr1') or row.get('Usr1') or '') or ''
                 usr2 = str(row.get('usr2') or row.get('Usr2') or '') or ''
-                status = str(row.get('status_pago') or row.get('status') or 'Pendente')
-                cat = str(row.get('categoria_final') or row.get('categoria') or '') or 'Não Categorizado'
+                status = str(row.get('status_pago') or row.get('status pago') or row.get('status') or 'Pendente')
+                cat = str(row.get('categoria_final') or row.get('categoria final') or row.get('categoria') or '') or 'Não Categorizado'
                 receita = 1 if str(row.get('receita') or '').lower() in ['sim', 'yes', '1', 'true'] else 0
-                comentario = str(row.get('comentarios') or '') or ''
-                conta = str(row.get('conta_bancaria') or row.get('conta') or '') or ''
+                comentario = str(row.get('comentarios') or row.get('comentários') or '') or ''
+                conta = str(row.get('conta_bancaria') or row.get('conta bancária') or row.get('conta bancaria') or row.get('conta') or '') or ''
                 if is_revolut:
                     conta = 'Revolut'
 
